@@ -1,0 +1,17 @@
+{
+    "HEADER": {
+    "PLANT": "2100",
+    "ORD_ST_DATE_FR": "25.01.2025",
+    "ORD_ST_DATE_TO": "25.01.2025",
+        "ORDER_TYPE":"",
+        "PROD_SUP":""
+    },
+   "PROC_ORD": [  
+    {
+        "PROCESS_ORDER": "",
+        "MATERIAL": "",
+        "COMPONENT": ""
+    }        
+   
+        ]
+}
