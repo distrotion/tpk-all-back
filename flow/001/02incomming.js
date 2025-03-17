@@ -66,15 +66,18 @@ router.post('/QMINCOMING/GETDATA', async (req, res) => {
   let output = {};
 
   const axios = require('axios');
-  let data = JSON.stringify({
-    "datestart": "01.03.2025",
-    "dateend": "10.03.2025"
-  });
+  let data = input;
+  
+  // JSON.stringify({
+  //   "datestart": "01.03.2025",
+  //   "dateend": "10.03.2025"
+  // });
 
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
+    // url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
+    url: 'http://172.20.30.46:14090/DATAGW/QMI002GET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -110,7 +113,8 @@ router.post('/QMINCOMING/SETVALUE', async (req, res) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://127.0.0.1:14090/DATAGW/QMI003SET',
+    // url: 'http://127.0.0.1:14090/DATAGW/QMI003SET',
+    url: 'http://172.20.30.46:14090/DATAGW/QMI003SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -146,7 +150,8 @@ router.post('/QMINCOMING/UDSAVE', async (req, res) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
+    // url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
+    url: 'http://172.20.30.46:14090/DATAGW/QMI004SET',
     headers: {
       'Content-Type': 'application/json'
     },
