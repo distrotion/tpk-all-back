@@ -144,6 +144,7 @@ router.post('/datacentertest/getsoi8order', async (req, res) => {
   let input = req.body;
   //-------------------------------------
   let output = [];
+
   if (input[`PLANT`] !== undefined && input[`ORDER`] !== undefined) {
 
     if (input[`PLANT`] === 'premix') {
@@ -216,11 +217,12 @@ router.post('/datacentertest/getsoi8order-ro', async (req, res) => {
   let input = req.body;
   //-------------------------------------
   let output = [];
-  if (input[`ORDER`] !== undefined) {
+  try {
+    if (input[`ORDER`] !== undefined) {
 
 
 
-    let queryS = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [ScadaReport].[dbo].[PMIXprocessinfo] where NumOrder = '${input[`ORDER`]}' 
+      let queryS = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [ScadaReport].[dbo].[PMIXprocessinfo] where NumOrder = '${input[`ORDER`]}' 
                   union SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate]  FROM [ScadaReport].[dbo].[CoilProcessinfo] where NumOrder = '${input[`ORDER`]}'
                   union SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate]  FROM [ScadaReport].[dbo].[HydroProcessinfo] where NumOrder = '${input[`ORDER`]}' 
                   union SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate]  FROM [ScadaReport].[dbo].[PLXprocessinfo] where NumOrder = '${input[`ORDER`]}'
@@ -228,89 +230,90 @@ router.post('/datacentertest/getsoi8order-ro', async (req, res) => {
                   union SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate]  FROM [ScadaReport].[dbo].[PMProcessinfo] where NumOrder = '${input[`ORDER`]}'
                   union SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate]  FROM [ScadaReport].[dbo].[NoxProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc
     `
-    // console.log(queryS)
+      // console.log(queryS)
 
-    let db = await mssql.qurey(queryS);
-    let datadb = [];
-    if (db['recordsets'] != undefined) {
-      if (db['recordsets'].length > 0) {
-        datadb = db['recordsets'][0];
-      }
-    }
-
-
-    output = datadb
-
-    if (output.length == 0) {
-      let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
-      console.log(querySV)
-      let db = await mssqlR.qurey(querySV);
+      let db = await mssql.qurey(queryS);
       let datadb = [];
-      console.log(db['recordsets'] )
       if (db['recordsets'] != undefined) {
         if (db['recordsets'].length > 0) {
           datadb = db['recordsets'][0];
         }
       }
 
+
       output = datadb
+
+      if (output.length == 0) {
+        let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
+        console.log(querySV)
+        let db = await mssqlR.qurey(querySV);
+        let datadb = [];
+        console.log(db['recordsets'])
+        if (db['recordsets'] != undefined) {
+          if (db['recordsets'].length > 0) {
+            datadb = db['recordsets'][0];
+          }
+        }
+
+        output = datadb
+      }
+
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[NoxProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+      // }
+
     }
-
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[NoxProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-    // }
-
-  }
+  } catch (s) { }
 
   return res.json(output);
 });

@@ -1,0 +1,129 @@
+{
+
+  "INSPLOT": "50000000204",
+
+  "INSPOPER": "10",
+
+  "INSPPOINT": "000001",
+
+  "USERC1": " - (REMARK)",
+
+  "CAT_TYPE": "3",
+
+  "PSEL_SET": "2100",
+
+  "SEL_SET": "UD-POINT",
+
+  "CODE_GRP": "UDCODE",
+
+  "CODE": "R3",
+
+  "T_SAMPLE_RESULTS": [
+
+      {
+
+          "INSPLOT": "50000000204",
+
+          "INSPOPER": "10",
+
+          "INSPCHAR": "20",
+
+          "INSPSAMPLE": "000001",
+
+          "CLOSED": "X",
+
+          "EVALUATED": "X",
+
+          "EVALUATION": "A",
+
+          "MEAN_VALUE": "",
+
+          "REMARK": "Remark - Header",
+
+          "CODE1": "",
+
+          "CODE_GRP1": "",
+
+          "ORIGINAL_INPUT": ""
+
+      }
+
+  ],
+
+  "T_SINGLE_RESULTS": [
+
+      {
+
+          "INSPLOT": "50000000204",
+
+          "INSPOPER": "0010",
+
+          "INSPCHAR": "0020",
+
+          "INSPSAMPLE": "000001",
+
+          "RES_NO": "0001",
+
+          "RES_VALUE": "14.8",
+
+          "REMARK": "POINT A / SAMPLE NO. 1",
+
+          "CODE1": " ",
+
+          "CODE_GRP1": " ",
+
+          "ORIGINAL_INPUT": " "
+
+      },
+
+      {
+
+          "INSPLOT": "50000000204",
+
+          "INSPOPER": "0010",
+
+          "INSPCHAR": "0020",
+
+          "INSPSAMPLE": "000001",
+
+          "RES_NO": "0002",
+
+          "RES_VALUE": "14.7",
+
+          "REMARK": "POINT A / SAMPLE NO. 2",
+
+          "CODE1": "",
+
+          "CODE_GRP1": "",
+
+          "ORIGINAL_INPUT": ""
+
+      },
+
+      {
+
+          "INSPLOT": "50000000204",
+
+          "INSPOPER": "0010",
+
+          "INSPCHAR": "0020",
+
+          "INSPSAMPLE": "000001",
+
+          "RES_NO": "0003",
+
+          "RES_VALUE": "14.6",
+
+          "REMARK": "POINT A / SAMPLE NO. 3",
+
+          "CODE1": "",
+
+          "CODE_GRP1": "",
+
+          "ORIGINAL_INPUT": ""
+
+      }
+
+  ]
+
+}
