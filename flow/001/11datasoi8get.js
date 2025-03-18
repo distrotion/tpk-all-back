@@ -412,6 +412,7 @@ router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
     `
 
     let db = await mssql.qurey(queryS);
+  
 
     let datadb = {}
     if (db['recordsets'] != undefined) {
@@ -419,7 +420,7 @@ router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
         datadb = db['recordsets'][0];
       }
     }
-
+    console.log(datadb);
     output = datadb
 
     if (output.length == 0) {
