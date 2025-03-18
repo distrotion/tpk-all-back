@@ -6,6 +6,7 @@ router.use(require("./flow/001/01TEST"))
 router.use(require("./flow/001/02incomming"))
 router.use(require("./flow/001/03iPPGETDATACHEM"))
 router.use(require("./flow/001/10GETDATAFROMJOBBINGAQC"))
+router.use(require("./flow/001/11datasoi8get"))
 
 //03iPPGETDATACHEM
 
