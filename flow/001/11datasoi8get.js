@@ -422,8 +422,9 @@ router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
     }
     console.log(datadb);
     output = datadb
-
+    console.log("____________1");
     if (output.length == 0) {
+      console.log("____________2");
 
       let querySV = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADApackinginfo]  where NumOrder = '${input[`ORDER`]}'`
       console.log(querySV);

@@ -375,99 +375,99 @@ router.post('/datacentertest/getsoi8order-pack', async (req, res) => {
   return res.json(output);
 });
 
-router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
-  //-------------------------------------
-  console.log("----datacentertest/getsoi8order-pack-or----");
-  console.log(req.body);
-  let input = req.body;
-  //-------------------------------------
-  let output = [];
-  if (input[`ORDER`] !== undefined) {
+// router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
+//   //-------------------------------------
+//   console.log("----datacentertest/getsoi8order-pack-or----");
+//   console.log(req.body);
+//   let input = req.body;
+//   //-------------------------------------
+//   let output = [];
+//   if (input[`ORDER`] !== undefined) {
 
 
 
-    let queryS = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PMIXpackinginfo] where NumOrder = '${input[`ORDER`]}' 
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[CoilPackinginfo] where NumOrder = '${input[`ORDER`]}' 
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[HydroPackinginfo] where NumOrder = '${input[`ORDER`]}'
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PLXpackinginfo] where NumOrder = '${input[`ORDER`]}'
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[LQpackinginfo] where NumOrder = '${input[`ORDER`]}'
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PMpackinginfo] where NumOrder = '${input[`ORDER`]}'
-    union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[Noxpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc
-    `
+//     let queryS = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PMIXpackinginfo] where NumOrder = '${input[`ORDER`]}' 
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[CoilPackinginfo] where NumOrder = '${input[`ORDER`]}' 
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[HydroPackinginfo] where NumOrder = '${input[`ORDER`]}'
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PLXpackinginfo] where NumOrder = '${input[`ORDER`]}'
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[LQpackinginfo] where NumOrder = '${input[`ORDER`]}'
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[PMpackinginfo] where NumOrder = '${input[`ORDER`]}'
+//     union SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [ScadaReport].[dbo].[Noxpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc
+//     `
 
-    let db = await mssql.qurey(queryS);
-    let datadb = db['recordsets'][0];
-    output = datadb
+//     let db = await mssql.qurey(queryS);
+//     let datadb = db['recordsets'][0];
+//     output = datadb
 
-    if (output.length == 0) {
-      let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
+//     if (output.length == 0) {
+//       let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
 
-      let db = await mssqlR.qurey(querySV);
-      let datadb = db['recordsets'][0];
-      output = datadb
-    }
-
-
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilPackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
+//       let db = await mssqlR.qurey(querySV);
+//       let datadb = db['recordsets'][0];
+//       output = datadb
+//     }
 
 
-    // }
-    // if (output.length === 0) {
+//     // if (output.length === 0) {
 
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroPackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilPackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
 
 
-    // }
-    // if (output.length === 0) {
+//     // }
+//     // if (output.length === 0) {
 
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
-
-
-    // }
-    // if (output.length === 0) {
-
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroPackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
 
 
-    // }
-    // if (output.length === 0) {
+//     // }
+//     // if (output.length === 0) {
 
-    //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[Noxpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
-    //   let db = await mssql.qurey(queryS);
-    //   let datadb = db['recordsets'][0];
-    //   output = datadb
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
 
-    // }
 
-  }
+//     // }
+//     // if (output.length === 0) {
 
-  console.log(output.length)
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
 
-  return res.json(output);
-});
+
+//     // }
+//     // if (output.length === 0) {
+
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
+
+
+//     // }
+//     // if (output.length === 0) {
+
+//     //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[Noxpackinginfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+//     //   let db = await mssql.qurey(queryS);
+//     //   let datadb = db['recordsets'][0];
+//     //   output = datadb
+
+//     // }
+
+//   }
+
+//   console.log(output.length)
+
+//   return res.json(output);
+// });
 
 
 router.post('/datacentertest/planning', async (req, res) => {
