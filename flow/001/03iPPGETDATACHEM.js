@@ -90,7 +90,7 @@ router.post('/03iPPGETDATACHEM/GETDATA', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI001GET',
-    url: 'http://172.20.30.46:14090/DATAGW/PPI001GET',
+    url: 'http://172.23.10.168:14090/DATAGW/PPI001GET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -129,7 +129,7 @@ router.post('/03iPPGETDATACHEM/SETI005DATA', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI005SET',
-    url: 'http://172.20.30.46:14090/DATAGW/PPI005SET',
+    url: 'http://172.23.10.168:14090/DATAGW/PPI005SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -167,7 +167,7 @@ router.post('/03iPPGETDATACHEM/SETI003DATA', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI003SET',
-    url: 'http://172.20.30.46:14090/DATAGW/PPI003SET',
+    url: 'http://172.23.10.168:14090/DATAGW/PPI003SET',
     headers: {
       'Content-Type': 'application/json'
     },

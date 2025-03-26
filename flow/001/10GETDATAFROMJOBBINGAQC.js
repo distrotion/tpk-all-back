@@ -170,7 +170,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GETDATA', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI002GET',
-    url: 'http://172.20.30.46:14090/DATAGW/PPI002GET',
+    url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -201,18 +201,11 @@ router.post('/10GETDATAFROMJOBBINGAQC/GETDATAGOODNOGOOD', async (req, res) => {
   if (input['PROCESS_ORDER']!= undefined) {
 
 
-    // let output = datatest02;
-  
-
-    // "ORD_ST_DATE_FR": "01.03.2025",
-    // "ORD_ST_DATE_TO": "07.03.2025",
-
     let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '${input['PROCESS_ORDER']}' ORDER BY date desc`
     console.log(querySV);
     let db = await mssqlR.qurey(querySV);
 
-    // console.log(db);
-    // let datadb = db['recordsets'][0];
+
 
     if (db['recordsets'] != undefined) {
       if (['recordsets'].length > 0) {
@@ -243,7 +236,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI004SET',
-    url: 'http://172.20.30.46:14090/DATAGW/PPI004SET',
+    url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
     headers: {
       'Content-Type': 'application/json'
     },

@@ -77,7 +77,7 @@ router.post('/QMINCOMING/GETDATA', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
-    url: 'http://172.20.30.46:14090/DATAGW/QMI002GET',
+    url: 'http://172.23.10.168:14090/DATAGW/QMI002GET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -114,7 +114,7 @@ router.post('/QMINCOMING/SETVALUE', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/QMI003SET',
-    url: 'http://172.20.30.46:14090/DATAGW/QMI003SET',
+    url: 'http://172.23.10.168:14090/DATAGW/QMI003SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -151,7 +151,7 @@ router.post('/QMINCOMING/UDSAVE', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
-    url: 'http://172.20.30.46:14090/DATAGW/QMI004SET',
+    url: 'http://172.23.10.168:14090/DATAGW/QMI004SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -192,7 +192,7 @@ router.post('/QMINCOMING/UDSAVEQC', async (req, res) => {
     method: 'post',
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
-    url: 'http://172.20.30.46:14090/DATAGW/QMI004SET',
+    url: 'http://172.23.10.168:14090/DATAGW/QMI004SET',
     headers: {
       'Content-Type': 'application/json'
     },
