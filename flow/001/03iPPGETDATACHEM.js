@@ -177,6 +177,7 @@ router.post('/03iPPGETDATACHEM/SETI003DATA', async (req, res) => {
   await axios.request(config)
     .then((response) => {
       // console.log(JSON.stringify(response.data));
+      console.log(response.data);
       output = response.data
     })
     .catch((error) => {
