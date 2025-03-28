@@ -263,4 +263,49 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
   res.json(output);
 });
 
+router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
+  //-------------------------------------
+  console.log("--10GETDATAFROMJOBBINGAQC/QCFN--");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+
+  // let output = datatest04;
+
+ 
+  let output = {};
+
+  const axios = require('axios');
+  // let data = JSON.stringify({
+  //   "BAPI_NAME": "ZFMPP_QCFN_IN",
+  //   "ORDERID": "2510000050",
+  //   "PERNR_ID": "99"
+  // });
+  let data =input;
+  
+  let config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://devsever.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE',
+    headers: { 
+      'token': '8e0647c4-7723-4252-9e09-cfcc54c94475', 
+      'Content-Type': 'application/json'
+    },
+    data : data
+  };
+  
+  await axios.request(config)
+  .then((response) => {
+    // console.log(JSON.stringify(response.data));
+    output = response.data;
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+  
+
+  //-------------------------------------
+  res.json(output);
+});
+
 module.exports = router;
