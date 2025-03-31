@@ -198,7 +198,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GETDATAGOODNOGOOD', async (req, res) => {
   let input = req.body;
   //-------------------------------------
   let output = [];
-  if (input['PROCESS_ORDER']!= undefined) {
+  if (input['PROCESS_ORDER'] != undefined) {
 
 
     let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '${input['PROCESS_ORDER']}' ORDER BY date desc`
@@ -250,10 +250,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
       // if (output.length > 0) {
       //   console.log(output[0]['TYPE']);
       //   if (output[0]['TYPE'] != 'E') {
-          
+
       //   }
       // }
-  
+
     })
     .catch((error) => {
       // console.log(error);
@@ -261,6 +261,156 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
 
   //-------------------------------------
   res.json(output);
+});
+
+router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
+  //-------------------------------------
+  console.log("--10GETDATAFROMJOBBINGAQC/AUTOSTORE--");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+
+  // let output = datatest02;
+  let output = [];
+
+  try {
+
+    Number.prototype.pad = function (n) {
+      if (n === undefined)
+        n = 2;
+
+      return (new Array(n).join('0') + this).slice(-n);
+    }
+    let d = new Date(new Date().setDate(new Date().getDate()));
+
+    let day = `${(d.getDate()).pad(2)}.${(d.getMonth() + 1).pad(2)}.${d.getFullYear()}`
+
+    // "ORD_ST_DATE_FR": "01.03.2025",
+    // "ORD_ST_DATE_TO": "07.03.2025",
+    const axios = require('axios');
+
+    let data = input;
+    let plant = `${input['HEADER']['PLANT']}`;
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      // url: 'http://127.0.0.1:14090/DATAGW/PPI002GET',
+      url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    };
+
+    await axios.request(config)
+      .then(async (response) => {
+        // console.log(JSON.stringify(response.data));
+        // output = response.data
+
+        // output = response.data;
+        //HEADER_INFO
+        for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
+          for (let j = 0; j < response.data['HEADER_INFO'].length; j++) {
+            // console.log(response.data['HEADER_INFO'][j]['MATERIAL']);
+            if (response.data['PHASE_INFO'][i]['PROCESS_ORDER'] === response.data['HEADER_INFO'][j]['PROCESS_ORDER']) {
+              response.data['PHASE_INFO'][i]['FG'] = response.data['HEADER_INFO'][j]['MATERIAL'];
+              response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
+            }
+
+          }//"UOM"
+        }
+
+        for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
+          // console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
+          // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
+          // console.log(response.data['PHASE_INFO'][i]['FG']);
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' ORDER BY date desc`
+          // console.log(querySV);
+
+          let db = await mssqlR.qurey(querySV);
+          if (db['recordsets'] != undefined) {
+            if (db['recordsets'].length > 0) {
+              // output = db['recordsets'][0];
+
+              if (db['recordsets'][0].length > 0) {
+                // console.log(db['recordsets'][0][0]);
+                // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+                if (`${response.data['PHASE_INFO'][i]['OPERATION']}` === `0600`) {
+                  // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+                  // console.log(db['recordsets'][0][0]);
+                  if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+
+                    let outdata = {
+                      "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
+                      "POSTINGDATE": day,
+                      "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
+                      "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+                      "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
+                      "QUANTITYSTATUS": "GOOD"
+                    };
+                    // console.log(outdata);
+
+                    let config = {
+                      method: 'post',
+                      maxBodyLength: Infinity,
+                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      data: outdata
+                    };
+                    await axios.request(config).then(async (response) => {
+                      //
+                      console.log(response.data);
+                    });
+                  }
+
+                  if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
+
+                    let outdata = {
+                      "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
+                      "POSTINGDATE": day,
+                      "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
+                      "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
+                      "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
+                      "QUANTITYSTATUS": "NG"
+                    };
+                    // console.log(outdata);
+
+                    let config = {
+                      method: 'post',
+                      maxBodyLength: Infinity,
+                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      data: outdata
+                    };
+                    await axios.request(config).then(async (response) => {
+                      //
+                      console.log(response.data);
+                    });
+                  }
+
+                }
+              }
+            }
+          }
+
+        }
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
+
+  } catch (error) {
+
+  }
+
+
+  //-------------------------------------
+  return res.json(output);
 });
 
 router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
@@ -272,7 +422,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
 
   // let output = datatest04;
 
- 
+
   let output = {};
 
   const axios = require('axios');
@@ -281,28 +431,28 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
   //   "ORDERID": "2510000050",
   //   "PERNR_ID": "99"
   // });
-  let data =input;
-  
+  let data = input;
+
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
     url: 'https://devsever.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE',
-    headers: { 
-      'token': '8e0647c4-7723-4252-9e09-cfcc54c94475', 
+    headers: {
+      'token': '8e0647c4-7723-4252-9e09-cfcc54c94475',
       'Content-Type': 'application/json'
     },
-    data : data
+    data: data
   };
-  
+
   await axios.request(config)
-  .then((response) => {
-    // console.log(JSON.stringify(response.data));
-    output = response.data;
-  })
-  .catch((error) => {
-    console.log(error);
-  });
-  
+    .then((response) => {
+      // console.log(JSON.stringify(response.data));
+      output = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
 
   //-------------------------------------
   res.json(output);
