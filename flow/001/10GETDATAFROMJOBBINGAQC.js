@@ -333,10 +333,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
-              // output = db['recordsets'][0];
+              output = db['recordsets'][0];
 
               if (db['recordsets'][0].length > 0) {
-              
+                console.log(db['recordsets'][0])
 
                 if (`${response.data['PHASE_INFO'][i]['OPERATION']}` === `0600`) {
                   // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
@@ -398,7 +398,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                   }
 
                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}';`
-                   let db = await mssqlR.qurey(queryUP);
+                   let dbss = await mssqlR.qurey(queryUP);
                 }
               }
             }
