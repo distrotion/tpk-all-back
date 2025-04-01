@@ -442,7 +442,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'https://tp-portal.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE',
+    url: 'http://tp-portal.thaiparker.co.th/API_QcReport/ZBAPI_QC_INTERFACE',
     headers: {
       // 'token': '8e0647c4-7723-4252-9e09-cfcc54c94475',
       'token': '761a0f38-be2b-49e5-ae04-4860cab1e1d2',
