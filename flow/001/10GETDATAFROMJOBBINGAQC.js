@@ -237,6 +237,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
     maxBodyLength: Infinity,
     // url: 'http://127.0.0.1:14090/DATAGW/PPI004SET',
     url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
+    // url: 'http://127.0.0.1:14090/DATAGWTEST/PPI004SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -297,6 +298,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
       maxBodyLength: Infinity,
       // url: 'http://127.0.0.1:14090/DATAGW/PPI002GET',
       url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
+      // url: 'http://127.0.0.1:14090/DATAGWTEST/PPI002GET',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -322,11 +324,11 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
         }
 
         for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
-          // console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
-          // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
-          // console.log(response.data['PHASE_INFO'][i]['FG']);
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where (PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and [STATUSCODE] <> 'SEND' ORDER BY date`
-          // console.log(querySV);
+          console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
+          console.log(response.data['PHASE_INFO'][i]['OPERATION']);
+          console.log(response.data['PHASE_INFO'][i]['FG']);
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and [STATUSCODE] <> 'SEND' ORDER BY date`
+          console.log(querySV);
 
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
