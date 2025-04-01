@@ -325,9 +325,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
         for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
           console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
-          console.log(response.data['PHASE_INFO'][i]['OPERATION']);
-          console.log(response.data['PHASE_INFO'][i]['FG']);
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and [STATUSCODE] <> 'SEND' ORDER BY date`
+          // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
+          // console.log(response.data['PHASE_INFO'][i]['FG']);
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
           console.log(querySV);
 
           let db = await mssqlR.qurey(querySV);
@@ -336,11 +336,13 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
               // output = db['recordsets'][0];
 
               if (db['recordsets'][0].length > 0) {
-                // console.log(db['recordsets'][0][0]);
-                // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+              
+
                 if (`${response.data['PHASE_INFO'][i]['OPERATION']}` === `0600`) {
                   // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
-                  // console.log(db['recordsets'][0][0]);
+                  console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+                  console.log(db['recordsets'][0]);
+                  // console.log(`${db['recordsets'][0][0]['GOOD']}`);
                   if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
                     let outdata = {
@@ -351,7 +353,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
                       "QUANTITYSTATUS": "GOOD"
                     };
-                    // console.log(outdata);
+                    console.log(outdata);
 
                     let config = {
                       method: 'post',
@@ -378,7 +380,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
                       "QUANTITYSTATUS": "NG"
                     };
-                    // console.log(outdata);
+                    console.log(outdata);
 
                     let config = {
                       method: 'post',
@@ -396,7 +398,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                   }
 
                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}';`
-                   let db = await mssqlR.qurey(queryUP);
+                   let dbs = await mssqlR.qurey(queryUP);
                 }
               }
             }
