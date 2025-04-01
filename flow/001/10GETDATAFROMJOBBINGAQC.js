@@ -325,7 +325,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           // console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
           // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
           // console.log(response.data['PHASE_INFO'][i]['FG']);
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' ORDER BY date desc`
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where (PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and 'STATUSCODE' != 'SEND') ORDER BY date desc`
           // console.log(querySV);
 
           let db = await mssqlR.qurey(querySV);
@@ -393,6 +393,8 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                     });
                   }
 
+                   let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET STATUSCODE = 'SEND' WHERE PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}';`
+                   let db = await mssqlR.qurey(queryUP);
                 }
               }
             }
