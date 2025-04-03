@@ -505,6 +505,30 @@ router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
   return res.json(output);
 });
 
+router.post('/datacentertest/PackNoSCADA', async (req, res) => {
+  //-------------------------------------
+  console.log("----datacentertest/PackNoSCADA----");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = [];
+  if (input[`NumOrder`] !== undefined && input[`NumPackSize1`] !== undefined && input[`NumPackSize2`] !== undefined && input[`NumPackSize3`] !== undefined&&input[`NumQuantity1`] !== undefined && input[`NumQuantity2`] !== undefined && input[`NumQuantity3`] !== undefined&& input[`NumWeight`] !== undefined) {
+//NumWeight
+//    let querySV = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADApackinginfo]  where NumOrder = '${input[`ORDER`]}'`
+    let queryS = `INSERT INTO [SOI8LOG].[dbo].[NonSCADApackinginfo] ([NumOrder], [NumPackSize1], [NumPackSize2], [NumPackSize3], [NumQuantity1], [NumQuantity2], [NumWeight], [NumQuantity3]) VALUES ('${input[`NumOrder`]}', '${input[`NumPackSize1`]}', '${input[`NumPackSize2`]}', '${input[`NumPackSize3`]}', '${input[`NumQuantity1`]}', '${input[`NumQuantity2`]}', '${input[`NumQuantity3`]}', '${input[`NumWeight`]}');`
+    console.log(queryS)
+    let db = await mssqlR.qurey(queryS);
+    console.log(db)
+    if (db['recordsets'].length > 0) {
+      let datadb = db['recordsets'][0];
+      output = datadb
+    }
+
+  }
+
+  return res.json(output);
+});
+
 
 router.post('/datacentertest/planning', async (req, res) => {
   //-------------------------------------
