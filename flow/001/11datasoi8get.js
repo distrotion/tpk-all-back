@@ -511,7 +511,7 @@ router.post('/datacentertest/PackNoSCADA', async (req, res) => {
   console.log(req.body);
   let input = req.body;
   //-------------------------------------
-  let output = [];
+  let output = {"msg":"NOK"};
   if (input[`NumOrder`] !== undefined && input[`NumPackSize1`] !== undefined && input[`NumPackSize2`] !== undefined && input[`NumPackSize3`] !== undefined&&input[`NumQuantity1`] !== undefined && input[`NumQuantity2`] !== undefined && input[`NumQuantity3`] !== undefined&& input[`NumWeight`] !== undefined) {
 //NumWeight
 //    let querySV = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADApackinginfo]  where NumOrder = '${input[`ORDER`]}'`
@@ -521,7 +521,8 @@ router.post('/datacentertest/PackNoSCADA', async (req, res) => {
     console.log(db)
     if (db['recordsets'].length > 0) {
       let datadb = db['recordsets'][0];
-      output = datadb
+      // output = datadb
+      output = {"msg":"OK"};
     }
 
   }
