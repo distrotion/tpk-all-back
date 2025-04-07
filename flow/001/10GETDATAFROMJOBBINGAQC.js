@@ -312,99 +312,188 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
         // output = response.data;
         //HEADER_INFO
-        for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
-          for (let j = 0; j < response.data['HEADER_INFO'].length; j++) {
-            // console.log(response.data['HEADER_INFO'][j]['MATERIAL']);
-            if (response.data['PHASE_INFO'][i]['PROCESS_ORDER'] === response.data['HEADER_INFO'][j]['PROCESS_ORDER']) {
-              response.data['PHASE_INFO'][i]['FG'] = response.data['HEADER_INFO'][j]['MATERIAL'];
-              response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
-            }
+        // for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
 
-          }//"UOM"
-        }
+        for (let j = 0; j < response.data['HEADER_INFO'].length; j++) {
+          // console.log(j)
+          // console.log(response.data['HEADER_INFO'][j]['MATERIAL']);
+          // if (response.data['PHASE_INFO'][i]['PROCESS_ORDER'] === response.data['HEADER_INFO'][j]['PROCESS_ORDER']) {
+          // response.data['PHASE_INFO'][i]['FG'] = response.data['HEADER_INFO'][j]['MATERIAL'];
+          // response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
+          // response.data['PHASE_INFO'][i]['SYSTEM_STATUS'] = response.data['HEADER_INFO'][j]['SYSTEM_STATUS'];
 
-        for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
-          console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
-          // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
-          // console.log(response.data['PHASE_INFO'][i]['FG']);
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
-          console.log(querySV);
-
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
               output = db['recordsets'][0];
+              if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("PCNF")) {
+                //
+              } else {
+                ///------------------------
+                // console.log(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`);
 
-              if (db['recordsets'][0].length > 0) {
-                console.log(db['recordsets'][0])
+                if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) {
 
-                if (`${response.data['PHASE_INFO'][i]['OPERATION']}` === `0600`) {
-                  // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
-                  console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
-                  console.log(db['recordsets'][0]);
-                  // console.log(`${db['recordsets'][0][0]['GOOD']}`);
-                  if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+                  console.log(db['recordsets'][0][0])
+                  if (db['recordsets'][0][0] != undefined) {
+                    if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
-                    let outdata = {
-                      "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
-                      "POSTINGDATE": day,
-                      "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
-                      "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
-                      "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
-                      "QUANTITYSTATUS": "GOOD"
-                    };
-                    console.log(outdata);
+                      let outdata = {
+                        "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                        "POSTINGDATE": day,
+                        "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                        "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+                        "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                        "QUANTITYSTATUS": "GOOD"
+                      };
+                      console.log(outdata);
 
-                    let config = {
-                      method: 'post',
-                      maxBodyLength: Infinity,
-                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                      headers: {
-                        'Content-Type': 'application/json'
-                      },
-                      data: outdata
-                    };
-                    await axios.request(config).then(async (response) => {
-                      //
-                      console.log(response.data);
-                    });
+                      let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        data: outdata
+                      };
+                      await axios.request(config).then(async (response) => {
+                        //
+                        console.log(response.data);
+                      });
+                    }
+
+                    if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
+
+                      let outdata = {
+                        "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                        "POSTINGDATE": day,
+                        "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                        "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
+                        "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                        "QUANTITYSTATUS": "NG"
+                      };
+                      console.log(outdata);
+
+                      let config = {
+                        method: 'post',
+                        maxBodyLength: Infinity,
+                        url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        data: outdata
+                      };
+                      await axios.request(config).then(async (response) => {
+                        //
+                        console.log(response.data);
+                      });
+                    }
+
+                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                    let dbss = await mssqlR.qurey(queryUP);
+
+
+
+
+
+
                   }
-
-                  if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
-
-                    let outdata = {
-                      "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
-                      "POSTINGDATE": day,
-                      "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
-                      "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
-                      "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
-                      "QUANTITYSTATUS": "NG"
-                    };
-                    console.log(outdata);
-
-                    let config = {
-                      method: 'post',
-                      maxBodyLength: Infinity,
-                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                      headers: {
-                        'Content-Type': 'application/json'
-                      },
-                      data: outdata
-                    };
-                    await axios.request(config).then(async (response) => {
-                      //
-                      console.log(response.data);
-                    });
-                  }
-
-                   let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}';`
-                   let dbss = await mssqlR.qurey(queryUP);
                 }
               }
+
             }
+
+            // }
+            //SYSTEM_STATUS
           }
 
-        }
+        }//"UOM"
+        // }
+
+        // for (let i = 0; i < response.data['PHASE_INFO'].length; i++) {
+        //   console.log(response.data['PHASE_INFO'][i]['PROCESS_ORDER']);
+        //   // console.log(response.data['PHASE_INFO'][i]['OPERATION']);
+        //   // console.log(response.data['PHASE_INFO'][i]['FG']);
+        //   let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
+        //   console.log(querySV);
+
+        //   let db = await mssqlR.qurey(querySV);
+        //   if (db['recordsets'] != undefined) {
+        //     if (db['recordsets'].length > 0) {
+        //       output = db['recordsets'][0];
+
+        //       if (db['recordsets'][0].length > 0) {
+        //         console.log(db['recordsets'][0])
+
+        //         if (`${response.data['PHASE_INFO'][i]['OPERATION']}` === `0600`) {
+        //           // console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+        //           console.log(`${response.data['PHASE_INFO'][i]['OPERATION']}`);
+        //           console.log(db['recordsets'][0]);
+        //           // console.log(`${db['recordsets'][0][0]['GOOD']}`);
+        //           if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+
+        //             let outdata = {
+        //               "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
+        //               "POSTINGDATE": day,
+        //               "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
+        //               "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+        //               "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
+        //               "QUANTITYSTATUS": "GOOD"
+        //             };
+        //             console.log(outdata);
+
+        //             let config = {
+        //               method: 'post',
+        //               maxBodyLength: Infinity,
+        //               url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+        //               headers: {
+        //                 'Content-Type': 'application/json'
+        //               },
+        //               data: outdata
+        //             };
+        //             await axios.request(config).then(async (response) => {
+        //               //
+        //               console.log(response.data);
+        //             });
+        //           }
+
+        //           if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
+
+        //             let outdata = {
+        //               "PROCESSORDER": `${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}`,
+        //               "POSTINGDATE": day,
+        //               "MATERIAL": `${response.data['PHASE_INFO'][i]['FG']}`,
+        //               "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
+        //               "UNIT": `${response.data['PHASE_INFO'][i]['UOM']}`,
+        //               "QUANTITYSTATUS": "NG"
+        //             };
+        //             console.log(outdata);
+
+        //             let config = {
+        //               method: 'post',
+        //               maxBodyLength: Infinity,
+        //               url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+        //               headers: {
+        //                 'Content-Type': 'application/json'
+        //               },
+        //               data: outdata
+        //             };
+        //             await axios.request(config).then(async (response) => {
+        //               //
+        //               console.log(response.data);
+        //             });
+        //           }
+
+        //           let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['PHASE_INFO'][i]['PROCESS_ORDER']}';`
+        //           let dbss = await mssqlR.qurey(queryUP);
+        //         }
+        //       }
+        //     }
+        //   }
+
+        // }
       })
       .catch((error) => {
         // console.log(error);
