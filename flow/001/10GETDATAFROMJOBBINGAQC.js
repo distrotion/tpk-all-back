@@ -600,7 +600,8 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
   let output = {};
 
   if(input['name']!= undefined){
-    var dir = `C:\\Users\\Administrator\\Desktop\\${input['name']}`;
+    // var dir = `C:\\Users\\Administrator\\Desktop\\${input['name']}`;
+    var dir = `\\172.20.10.150\\sap_s4hana\\S4PRD\\HSORDERSHEET_PP\\112233`;
     if (!fs.existsSync(dir)){
       fs.mkdirSync(dir, { recursive: true });
     }
