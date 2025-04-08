@@ -596,7 +596,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
   let input = req.body;
   //-------------------------------------
 
-  // let output = datatest04;
+  let output = {};
 
 
   // let output = {};
