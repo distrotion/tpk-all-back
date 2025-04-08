@@ -8,6 +8,7 @@ var axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
+
 function base64ToPdf(base64String, outputFilePath) {
   const data = Buffer.from(base64String, 'base64');
 
@@ -607,12 +608,16 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
   //   "ORDERID": "2510000050",
   //   "PERNR_ID": "99"
   // });
-  let data = input;
-  function createFolder(folder){
-    makeDir(folder)
-    }
+  // let data = input;
+  // function createFolder(folder){
+  //   makeDir(folder)
+  //   }
 
-  createFolder("\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST");
+  // createFolder("\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST");
+  var dir = '\\\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST';
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir, { recursive: true });
+  }
 
 
   //-------------------------------------
