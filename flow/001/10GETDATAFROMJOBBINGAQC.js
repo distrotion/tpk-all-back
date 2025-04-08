@@ -599,6 +599,13 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
 
   let output = {};
 
+  if(input['name']!= undefined){
+    var dir = `C:\\Users\\Administrator\\Desktop\\${input['name']}`;
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  }
+
 
   // let output = {};
 
@@ -615,10 +622,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
 
   // createFolder("\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST");
   // var dir = '\\\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST';
-  var dir = 'C:\\Users\\Administrator\\Desktop\\test2';
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir, { recursive: true });
-  }
+  
 
 
   //-------------------------------------
