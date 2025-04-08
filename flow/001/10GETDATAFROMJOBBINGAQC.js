@@ -589,4 +589,36 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
   res.json(output);
 });
 
+router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
+  //-------------------------------------
+  console.log("--10GETDATAFROMJOBBINGAQC/GENFLODER--");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+
+  // let output = datatest04;
+
+
+  // let output = {};
+
+  // const axios = require('axios');
+  // let data = JSON.stringify({
+  //   "BAPI_NAME": "ZFMPP_QCFN_IN",
+  //   "ORDERID": "2510000050",
+  //   "PERNR_ID": "99"
+  // });
+  let data = input;
+  function createFolder(folder){
+    makeDir(folder)
+    }
+
+  createFolder("\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST");
+
+
+  //-------------------------------------
+  res.json(output);
+});
+
 module.exports = router;
+
+
