@@ -335,71 +335,75 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                 ///------------------------
                 // console.log(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`);
 
+
+
                 if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) {
 
                   console.log(db['recordsets'][0][0])
                   if (db['recordsets'][0][0] != undefined) {
-                    if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
-                      let outdata = {
-                        "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
-                        "POSTINGDATE": day,
-                        "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
-                        "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
-                        "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
-                        "QUANTITYSTATUS": "GOOD"
-                      };
-                      console.log(outdata);
+                    if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
+                      if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
-                      let config = {
-                        method: 'post',
-                        maxBodyLength: Infinity,
-                        url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                        headers: {
-                          'Content-Type': 'application/json'
-                        },
-                        data: outdata
-                      };
-                      await axios.request(config).then(async (response) => {
-                        //
-                        console.log(response.data);
-                      });
+                        let outdata = {
+                          "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                          "POSTINGDATE": day,
+                          "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                          "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+                          "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                          "QUANTITYSTATUS": "GOOD"
+                        };
+                        console.log(outdata);
+
+                        let config = {
+                          method: 'post',
+                          maxBodyLength: Infinity,
+                          url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          data: outdata
+                        };
+                        await axios.request(config).then(async (response) => {
+                          //
+                          console.log(response.data);
+                        });
+                      }
+
+                      // if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
+
+                      //   let outdata = {
+                      //     "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                      //     "POSTINGDATE": day,
+                      //     "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                      //     "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
+                      //     "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                      //     "QUANTITYSTATUS": "NG"
+                      //   };
+                      //   console.log(outdata);
+
+                      //   let config = {
+                      //     method: 'post',
+                      //     maxBodyLength: Infinity,
+                      //     url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      //     headers: {
+                      //       'Content-Type': 'application/json'
+                      //     },
+                      //     data: outdata
+                      //   };
+                      //   await axios.request(config).then(async (response) => {
+                      //     //
+                      //     console.log(response.data);
+                      //   });
+                      // }
+
+                      let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                      let dbss = await mssqlR.qurey(queryUP);
+
+
+
+
                     }
-
-                    // if (`${db['recordsets'][0][0]['NOGOOD']}` != '') {
-
-                    //   let outdata = {
-                    //     "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
-                    //     "POSTINGDATE": day,
-                    //     "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
-                    //     "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
-                    //     "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
-                    //     "QUANTITYSTATUS": "NG"
-                    //   };
-                    //   console.log(outdata);
-
-                    //   let config = {
-                    //     method: 'post',
-                    //     maxBodyLength: Infinity,
-                    //     url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                    //     headers: {
-                    //       'Content-Type': 'application/json'
-                    //     },
-                    //     data: outdata
-                    //   };
-                    //   await axios.request(config).then(async (response) => {
-                    //     //
-                    //     console.log(response.data);
-                    //   });
-                    // }
-
-                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                    let dbss = await mssqlR.qurey(queryUP);
-
-
-
-
-
 
                   }
                 } else {
@@ -408,33 +412,35 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
               }
 
               if (db['recordsets'][0][0] != undefined) {
-                if (`${db['recordsets'][0][0]['NOGOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODENG']}` != 'SEND') {
+                if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
+                  if (`${db['recordsets'][0][0]['NOGOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODENG']}` != 'SEND') {
 
-                  let outdata = {
-                    "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
-                    "POSTINGDATE": day,
-                    "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
-                    "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
-                    "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
-                    "QUANTITYSTATUS": "NG"
-                  };
-                  console.log(outdata);
+                    let outdata = {
+                      "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                      "POSTINGDATE": day,
+                      "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                      "QUANTITY": `${db['recordsets'][0][0]['NOGOOD']}`,
+                      "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                      "QUANTITYSTATUS": "NG"
+                    };
+                    console.log(outdata);
 
-                  let config = {
-                    method: 'post',
-                    maxBodyLength: Infinity,
-                    url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    data: outdata
-                  };
-                  await axios.request(config).then(async (response) => {
-                    //
-                    console.log(response.data);
-                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                    let dbss = await mssqlR.qurey(queryUP);
-                  });
+                    let config = {
+                      method: 'post',
+                      maxBodyLength: Infinity,
+                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      data: outdata
+                    };
+                    await axios.request(config).then(async (response) => {
+                      //
+                      console.log(response.data);
+                      let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                      let dbss = await mssqlR.qurey(queryUP);
+                    });
+                  }
                 }
               }
 
@@ -599,10 +605,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
 
   let output = {};
 
-  if(input['MONTH']!= undefined&&input['ORDER']!= undefined){
+  if (input['MONTH'] != undefined && input['ORDER'] != undefined) {
     // var dir = `C:\\Users\\Administrator\\Desktop\\${input['name']}`;
     var dir = `\\\\172.20.10.150\\sap_s4hana\\S4PRD\\HSORDERSHEET_PP\\${input['MONTH']}\\${input['ORDER']}`;
-    if (!fs.existsSync(dir)){
+    if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
   }
@@ -623,7 +629,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
 
   // createFolder("\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST");
   // var dir = '\\\\172.20.10.150\\sap_s4hana\\S4PRD\\TEST';
-  
+
 
 
   //-------------------------------------
