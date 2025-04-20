@@ -636,6 +636,310 @@ router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
   res.json(output);
 });
 
+
+router.post('/10GETDATAFROMJOBBINGAQC/SAPSETLOT', async (req, res) => {
+  //-------------------------------------
+  console.log("--10GETDATAFROMJOBBINGAQC/SAPSETLOT--");
+  // console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+
+  // let output = datatest02;
+  // input = sapdatatest;
+  let outputset = [];
+  //-------------------------------------
+  let buff = []
+
+  let output = []
+  let output2 = []
+  let output3 = []
+  let output4 = []
+  let output5 = []
+  let output6 = []
+  let output7 = []
+  let output8 = []
+  let output9 = []
+
+  //-------
+  let input1 = input['HEADER_INFO']
+  let input2 = input['COMPONENT_INFO']
+
+  for (let i = 0; i < input2.length; i++) {
+    let dataout1 = {};
+    dataout1 = input2[i];
+    // output.push(dataout1);
+
+    for (let j = 0; j < input1.length; j++) {
+      let dataout2 = {};
+      dataout2 = input1[j];
+      // output2.push(dataout2);
+      if ((dataout2['PROCESS_ORDER'] === dataout1['PROCESS_ORDER'])) {
+
+
+
+        // dataout2['ITEM_com']= dataout1['ITEM'];
+        // dataout2['MATERIAL_com']= dataout1['MATERIAL'];
+        // dataout2['MATERIAL_TEXT_com']= dataout1['MATERIAL_TEXT'];
+        // dataout2['REQ_QTY_com']= dataout1['REQ_QTY'];
+        // dataout2['UOM_com']= dataout1['UOM'];
+        // dataout2['ITEM_CATE_com']= dataout1['ITEM_CATE'];
+        // dataout2['NO_OF_BATCH_com']= dataout1['NO_OF_BATCH'];
+        // dataout2['BATCH_com']= dataout1['BATCH'];
+        // dataout2['BATCH_QTY_com']= dataout1['BATCH_QTY'];
+        // dataout2['BATCH_UOM_com']= dataout1['BATCH_UOM'];
+        // dataout2['STGE_LOC_com']= dataout1['STGE_LOC'];
+        // dataout2['MVT_TYPE_com']= dataout1['MVT_TYPE'];
+        // dataout2['OPERATION_com']= dataout1['OPERATION'];
+        // dataout2['CUST_VEND_LOT_com']= dataout1['CUST_VEND_LOT'];
+        // dataout2['CUST_VEND_LOT_com']= i;
+
+        if (dataout1['CUST_VEND_LOT'] !== '?') {
+
+          output3.push({
+            "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
+            "ORDER_TYPE": dataout2['ORDER_TYPE'],
+            "ORDER_TYPE_DESC": dataout2['ORDER_TYPE_DESC'],
+            "PLANT": dataout2['PLANT'],
+            "MATERIAL": dataout2['MATERIAL'],
+            "MATERIAL_TEXT": dataout2['MATERIAL_TEXT'],
+            "TOTAL_QTY": dataout2['TOTAL_QTY'],
+            "UOM": dataout2['UOM'],
+            "PROD_SUP": dataout2['PROD_SUP'],
+            "PROD_SUP_DESC": dataout2['PROD_SUP_DESC'],
+            "BASIC_START_DATE": dataout2['BASIC_START_DATE'],
+            "BASIC_FINISH_DATE": dataout2['BASIC_FINISH_DATE'],
+            "ORDER_SEQ_NO": dataout2['ORDER_SEQ_NO'],
+
+            "BATCH": dataout2['BATCH'],
+            "STGE_LOC": dataout2['STGE_LOC'],
+            "INSP_LOT": dataout2['INSP_LOT'],
+            "SYSTEM_STATUS": dataout2['SYSTEM_STATUS'],
+            "USER_STATUS": dataout2['USER_STATUS'],
+            "USER_STATUS_DESC": dataout2['USER_STATUS_DESC'],
+            "OLD_MATERIAL": dataout2['OLD_MATERIAL'],
+
+
+
+            //
+            "ITEM_com": dataout1['ITEM'],
+            "MATERIAL_com": dataout1['MATERIAL'],
+            "MATERIAL_TEXT_com": dataout1['MATERIAL_TEXT'],
+            "REQ_QTY_com": dataout1['REQ_QTY'],
+            "UOM_com": dataout1['UOM'],
+            "ITEM_CATE_com": dataout1['ITEM_CATE'],
+            "NO_OF_BATCH_com": dataout1['NO_OF_BATCH'],
+            "BATCH_com": dataout1['BATCH'],
+            "BATCH_QTY_com": dataout1['BATCH_QTY'],
+            "BATCH_UOM_com": dataout1['BATCH_UOM'],
+            "STGE_LOC_com": dataout1['STGE_LOC'],
+            "MVT_TYPE_com": dataout1['MVT_TYPE'],
+            "OPERATION_com": dataout1['OPERATION'],
+            "CUST_VEND_LOT_com": dataout1['CUST_VEND_LOT'],
+
+          });
+        } else {
+
+          output4.push({
+            "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
+            "ORDER_TYPE": dataout2['ORDER_TYPE'],
+            "ORDER_TYPE_DESC": dataout2['ORDER_TYPE_DESC'],
+            "PLANT": dataout2['PLANT'],
+            "MATERIAL": dataout2['MATERIAL'],
+            "MATERIAL_TEXT": dataout2['MATERIAL_TEXT'],
+            "TOTAL_QTY": dataout2['TOTAL_QTY'],
+            "UOM": dataout2['UOM'],
+            "PROD_SUP": dataout2['PROD_SUP'],
+            "PROD_SUP_DESC": dataout2['PROD_SUP_DESC'],
+            "BASIC_START_DATE": dataout2['BASIC_START_DATE'],
+            "BASIC_FINISH_DATE": dataout2['BASIC_FINISH_DATE'],
+            "ORDER_SEQ_NO": dataout2['ORDER_SEQ_NO'],
+
+            "BATCH": dataout2['BATCH'],
+            "STGE_LOC": dataout2['STGE_LOC'],
+            "INSP_LOT": dataout2['INSP_LOT'],
+            "SYSTEM_STATUS": dataout2['SYSTEM_STATUS'],
+            "USER_STATUS": dataout2['USER_STATUS'],
+            "USER_STATUS_DESC": dataout2['USER_STATUS_DESC'],
+            "OLD_MATERIAL": dataout2['OLD_MATERIAL'],
+
+
+
+            //
+            "ITEM_com": dataout1['ITEM'],
+            "MATERIAL_com": dataout1['MATERIAL'],
+            "MATERIAL_TEXT_com": dataout1['MATERIAL_TEXT'],
+            "REQ_QTY_com": dataout1['REQ_QTY'],
+            "UOM_com": dataout1['UOM'],
+            "ITEM_CATE_com": dataout1['ITEM_CATE'],
+            "NO_OF_BATCH_com": dataout1['NO_OF_BATCH'],
+            "BATCH_com": dataout1['BATCH'],
+            "BATCH_QTY_com": dataout1['BATCH_QTY'],
+            "BATCH_UOM_com": dataout1['BATCH_UOM'],
+            "STGE_LOC_com": dataout1['STGE_LOC'],
+            "MVT_TYPE_com": dataout1['MVT_TYPE'],
+            "OPERATION_com": dataout1['OPERATION'],
+            "CUST_VEND_LOT_com": dataout1['CUST_VEND_LOT'],
+
+          });
+        }
+
+      }
+    }
+  }
+
+  for (let i = 0; i < input1.length; i++) {
+    for (let j = 0; j < output4.length; j++) {
+      if (output4[j]['BATCH'] === input1[i]['BATCH']) {
+        input1[i]['order2'] = output4[j]['PROCESS_ORDER']
+        output5.push(input1[i]);
+      }
+    }
+  }
+
+  for (let i = 0; i < input2.length; i++) {
+    for (let j = 0; j < output5.length; j++) {
+      if (output5[j]['PROCESS_ORDER'] === input2[i]['PROCESS_ORDER']) {
+        input2[i]['order2'] = output5[j]['order2']
+        output6.push(input2[i]);
+        break;
+      }
+    }
+  }
+
+  //------------------------------------------------------------------------------
+
+  for (let i = 0; i < output6.length; i++) {
+    let dataout1 = {};
+    dataout1 = output6[i];
+    // output.push(dataout1);
+
+
+    for (let j = 0; j < input1.length; j++) {
+      let dataout2 = {};
+      dataout2 = input1[j];
+      // output2.push(dataout2);
+      if ((dataout2['PROCESS_ORDER'] === dataout1['order2'])) {
+        console.log(dataout1['CUST_VEND_LOT']);
+
+
+        // dataout2['ITEM_com']= dataout1['ITEM'];
+        // dataout2['MATERIAL_com']= dataout1['MATERIAL'];
+        // dataout2['MATERIAL_TEXT_com']= dataout1['MATERIAL_TEXT'];
+        // dataout2['REQ_QTY_com']= dataout1['REQ_QTY'];
+        // dataout2['UOM_com']= dataout1['UOM'];
+        // dataout2['ITEM_CATE_com']= dataout1['ITEM_CATE'];
+        // dataout2['NO_OF_BATCH_com']= dataout1['NO_OF_BATCH'];
+        // dataout2['BATCH_com']= dataout1['BATCH'];
+        // dataout2['BATCH_QTY_com']= dataout1['BATCH_QTY'];
+        // dataout2['BATCH_UOM_com']= dataout1['BATCH_UOM'];
+        // dataout2['STGE_LOC_com']= dataout1['STGE_LOC'];
+        // dataout2['MVT_TYPE_com']= dataout1['MVT_TYPE'];
+        // dataout2['OPERATION_com']= dataout1['OPERATION'];
+        // dataout2['CUST_VEND_LOT_com']= dataout1['CUST_VEND_LOT'];
+        // dataout2['CUST_VEND_LOT_com']= i;
+
+        if (dataout1['CUST_VEND_LOT'] !== '?') {
+
+          output3.push({
+            "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
+            "ORDER_TYPE": dataout2['ORDER_TYPE'],
+            "ORDER_TYPE_DESC": dataout2['ORDER_TYPE_DESC'],
+            "PLANT": dataout2['PLANT'],
+            "MATERIAL": dataout2['MATERIAL'],
+            "MATERIAL_TEXT": dataout2['MATERIAL_TEXT'],
+            "TOTAL_QTY": dataout2['TOTAL_QTY'],
+            "UOM": dataout2['UOM'],
+            "PROD_SUP": dataout2['PROD_SUP'],
+            "PROD_SUP_DESC": dataout2['PROD_SUP_DESC'],
+            "BASIC_START_DATE": dataout2['BASIC_START_DATE'],
+            "BASIC_FINISH_DATE": dataout2['BASIC_FINISH_DATE'],
+            "ORDER_SEQ_NO": dataout2['ORDER_SEQ_NO'],
+
+            "BATCH": dataout2['BATCH'],
+            "STGE_LOC": dataout2['STGE_LOC'],
+            "INSP_LOT": dataout2['INSP_LOT'],
+            "SYSTEM_STATUS": dataout2['SYSTEM_STATUS'],
+            "USER_STATUS": dataout2['USER_STATUS'],
+            "USER_STATUS_DESC": dataout2['USER_STATUS_DESC'],
+            "OLD_MATERIAL": dataout2['OLD_MATERIAL'],
+
+            //
+            "ITEM_com": dataout1['ITEM'],
+            "MATERIAL_com": dataout1['MATERIAL'],
+            "MATERIAL_TEXT_com": dataout1['MATERIAL_TEXT'],
+            "REQ_QTY_com": dataout1['REQ_QTY'],
+            "UOM_com": dataout1['UOM'],
+            "ITEM_CATE_com": dataout1['ITEM_CATE'],
+            "NO_OF_BATCH_com": dataout1['NO_OF_BATCH'],
+            "BATCH_com": dataout1['BATCH'],
+            "BATCH_QTY_com": dataout1['BATCH_QTY'],
+            "BATCH_UOM_com": dataout1['BATCH_UOM'],
+            "STGE_LOC_com": dataout1['STGE_LOC'],
+            "MVT_TYPE_com": dataout1['MVT_TYPE'],
+            "OPERATION_com": dataout1['OPERATION'],
+            "CUST_VEND_LOT_com": dataout1['CUST_VEND_LOT'],
+
+          });
+
+        }else{
+          output3.push({
+            "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
+            "ORDER_TYPE": dataout2['ORDER_TYPE'],
+            "ORDER_TYPE_DESC": dataout2['ORDER_TYPE_DESC'],
+            "PLANT": dataout2['PLANT'],
+            "MATERIAL": dataout2['MATERIAL'],
+            "MATERIAL_TEXT": dataout2['MATERIAL_TEXT'],
+            "TOTAL_QTY": dataout2['TOTAL_QTY'],
+            "UOM": dataout2['UOM'],
+            "PROD_SUP": dataout2['PROD_SUP'],
+            "PROD_SUP_DESC": dataout2['PROD_SUP_DESC'],
+            "BASIC_START_DATE": dataout2['BASIC_START_DATE'],
+            "BASIC_FINISH_DATE": dataout2['BASIC_FINISH_DATE'],
+            "ORDER_SEQ_NO": dataout2['ORDER_SEQ_NO'],
+
+            "BATCH": dataout2['BATCH'],
+            "STGE_LOC": dataout2['STGE_LOC'],
+            "INSP_LOT": dataout2['INSP_LOT'],
+            "SYSTEM_STATUS": dataout2['SYSTEM_STATUS'],
+            "USER_STATUS": dataout2['USER_STATUS'],
+            "USER_STATUS_DESC": dataout2['USER_STATUS_DESC'],
+            "OLD_MATERIAL": dataout2['OLD_MATERIAL'],
+
+            //
+            "ITEM_com": dataout1['ITEM'],
+            "MATERIAL_com": dataout1['MATERIAL'],
+            "MATERIAL_TEXT_com": dataout1['MATERIAL_TEXT'],
+            "REQ_QTY_com": dataout1['REQ_QTY'],
+            "UOM_com": dataout1['UOM'],
+            "ITEM_CATE_com": dataout1['ITEM_CATE'],
+            "NO_OF_BATCH_com": dataout1['NO_OF_BATCH'],
+            "BATCH_com": dataout1['BATCH'],
+            "BATCH_QTY_com": dataout1['BATCH_QTY'],
+            "BATCH_UOM_com": dataout1['BATCH_UOM'],
+            "STGE_LOC_com": dataout1['STGE_LOC'],
+            "MVT_TYPE_com": dataout1['MVT_TYPE'],
+            "OPERATION_com": dataout1['OPERATION'],
+            "CUST_VEND_LOT_com": dataout1['CUST_VEND_LOT'],
+
+          });
+        }
+
+
+      }
+    }
+  }
+
+
+
+
+
+
+  //-------------------------------------
+  return res.json(output3);
+});
+
+
+let sapdatatest = {}
 module.exports = router;
 
 
