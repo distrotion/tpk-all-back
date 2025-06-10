@@ -330,9 +330,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           // response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
           // response.data['PHASE_INFO'][i]['SYSTEM_STATUS'] = response.data['HEADER_INFO'][j]['SYSTEM_STATUS'];
 
-          //and  [STATUSCODE] IS NULL ORDER BY date
-
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' `
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
@@ -346,7 +344,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
 
-                if ((`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF"))&&(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("DLV") == false)) {
+                if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) {
 
                   console.log(db['recordsets'][0][0])
                   if (db['recordsets'][0][0] != undefined) {
@@ -406,14 +404,8 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       //   });
                       // }
 
-                      // if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("DLV")) {
-
-                      // } else {
-                        let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                        let dbss = await mssqlR.qurey(queryUP);
-                      // }
-
-
+                      let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                      let dbss = await mssqlR.qurey(queryUP);
 
 
 
@@ -1350,10 +1342,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE_N', async (req, res) => {
                 // console.log(`${datasetp[0]['SYSTEM_STATUS']}`)
                 //  console.log(`${datasetpPHASE_INFO}`)
                 for (let s = 0; s < datasetpPHASE_INFO.length; s++) {
-                  if (datasetpPHASE_INFO[s]['OPERATION'] === '0600') {
+                  if(datasetpPHASE_INFO[s]['OPERATION'] ==='0600'){
                     console.log(datasetpPHASE_INFO[s])
                   }
-
+                  
                 }
                 if (`${datasetp[0]['SYSTEM_STATUS']}`.includes("PCNF")) {
                   console.log(`------>>NOK`)
