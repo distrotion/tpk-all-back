@@ -206,7 +206,7 @@ router.post('/QMINCOMING/UDSAVEQC', async (req, res) => {
       if (output.length > 0) {
         console.log(output[0]['TYPE']);
         if (output[0]['TYPE'] != 'E') {
-          
+
         }
       }
       let querySV = `INSERT INTO [SAPHANADATA].[dbo].[HSGOODRECEIVE] ([PROCESS_ORDER], [GOOD], [NOGOOD],[UD_CODE_GROUP],[UD_CODE],[CODE_TEXT],[SAP_RETURN]) 

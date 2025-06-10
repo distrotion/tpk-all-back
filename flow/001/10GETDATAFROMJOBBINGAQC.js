@@ -15,6 +15,13 @@ function base64ToPdf(base64String, outputFilePath) {
   fs.writeFileSync(outputFilePath, data);
 }
 
+Number.prototype.pad = function (n) {
+  if (n === undefined)
+    n = 2;
+
+  return (new Array(n).join('0') + this).slice(-n);
+}
+
 
 
 
@@ -323,7 +330,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           // response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
           // response.data['PHASE_INFO'][i]['SYSTEM_STATUS'] = response.data['HEADER_INFO'][j]['SYSTEM_STATUS'];
 
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
+          //and  [STATUSCODE] IS NULL ORDER BY date
+
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' `
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
@@ -337,7 +346,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
 
-                if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) {
+                if ((`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF"))&&(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("DLV") == false)) {
 
                   console.log(db['recordsets'][0][0])
                   if (db['recordsets'][0][0] != undefined) {
@@ -397,8 +406,14 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       //   });
                       // }
 
-                      let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                      let dbss = await mssqlR.qurey(queryUP);
+                      // if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("DLV")) {
+
+                      // } else {
+                        let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                        let dbss = await mssqlR.qurey(queryUP);
+                      // }
+
+
 
 
 
@@ -881,7 +896,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/SAPSETLOT', async (req, res) => {
 
           });
 
-        }else{
+        } else {
           output3.push({
             "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
             "ORDER_TYPE": dataout2['ORDER_TYPE'],
@@ -1182,7 +1197,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/SAPSETLOT2', async (req, res) => {
 
           });
 
-        }else{
+        } else {
           // output3.push({
           //   "PROCESS_ORDER": dataout2['PROCESS_ORDER'],
           //   "ORDER_TYPE": dataout2['ORDER_TYPE'],
@@ -1239,8 +1254,139 @@ router.post('/10GETDATAFROMJOBBINGAQC/SAPSETLOT2', async (req, res) => {
   return res.json(output3);
 });
 
+router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE_N', async (req, res) => {
+  //-------------------------------------
+  console.log("--10GETDATAFROMJOBBINGAQC/AUTOSTORE_N--");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = [];
 
-let sapdatatest = {}
+  if (input[`DATESTART`] != undefined && input[`DATEEND`] != undefined) {
+
+    // let output = datatest02;
+
+
+    try {
+
+      // let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where date between '2025/05/20' and '2025/05/30' and [STATUSCODE] IS NULL ORDER BY date`
+      let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where date between '${input[`DATESTART`]}' and '${input[`DATEEND`]}' and [STATUSCODE] IS NULL ORDER BY date`
+      let db = await mssqlR.qurey(querySV);
+
+      //and [STATUSCODE] IS NULL ORDER BY date
+
+      if (db['recordsets'] != undefined) {
+        if (['recordsets'].length > 0) {
+          let dataUDlist = db['recordsets'][0];
+          // console.log(output);
+          for (let i = 0; i < dataUDlist.length; i++) {
+            console.log(dataUDlist[i][`PROCESS_ORDER`]);
+            // console.log(input[`DATEEND`]);
+            for (let j = 0; j < 10; j++) {
+              //input[`DATEEND`]
+              // console.log(j);
+
+              //var d = new Date(new Date().setDate(new Date().getDate()-10));
+              var mydate = new Date(`${input[`DATEEND`]}`);
+              // console.log(mydate.toDateString());
+              // console.log(`---------------`);
+              var mydatestart = new Date(new Date(`${input[`DATEEND`]}`).setDate(new Date(`${input[`DATEEND`]}`).getDate() - (j + 0) * 25));
+              // console.log(`${mydatestart.getDate().pad(2)}.${(mydatestart.getMonth() + 1).pad(2)}.${mydatestart.getFullYear().pad(2)}`);
+              var mydateend = new Date(new Date(`${input[`DATEEND`]}`).setDate(new Date(`${input[`DATEEND`]}`).getDate() - (j + 1) * 25));
+              // console.log(`${mydateend.getDate().pad(2)}.${(mydateend.getMonth() + 1).pad(2)}.${mydateend.getFullYear().pad(2)}`);
+
+              test = {
+                "HEADER": {
+                  "PLANT": `${input[`PLANT`]}`,
+                  "ORD_ST_DATE_FR": `${mydateend.getDate().pad(2)}.${(mydateend.getMonth() + 1).pad(2)}.${mydateend.getFullYear().pad(2)}`,
+                  "ORD_ST_DATE_TO": `${mydatestart.getDate().pad(2)}.${(mydatestart.getMonth() + 1).pad(2)}.${mydatestart.getFullYear().pad(2)}`,
+                  "ORDER_TYPE": "",
+                  "PROD_SUP": ""
+                },
+                "PROC_ORD": [
+                  {
+                    "PROCESS_ORDER": `${dataUDlist[i][`PROCESS_ORDER`]}`,
+                    "MATERIAL": "",
+                    "COMPONENT": ""
+                  }
+                ]
+              };
+              // console.log(test);
+              //
+              let config = {
+                method: 'post',
+                maxBodyLength: Infinity,
+                // url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
+                url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/GETDATA',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                data: test
+              };
+
+              let datasetp = [];
+              let datasetpPHASE_INFO = [];
+
+              await axios.request(config)
+                .then((response) => {
+                  // console.log(JSON.stringify(response.data));
+                  // console.log((response.data));
+                  let datasap = response.data
+                  if (datasap['HEADER_INFO'].length > 0) {
+                    // console.log(datasap['HEADER_INFO']);
+                    datasetp = datasap['HEADER_INFO'];
+                    datasetpPHASE_INFO = datasap['PHASE_INFO'];
+                  }
+                })
+                .catch((error) => {
+                  // console.log(error);
+                });
+
+              if (datasetp.length > 0) {
+                console.log(datasetp[0]);
+                console.log(dataUDlist[i])
+                // let setdataapp = datasetp[0]
+                // console.log(`${datasetp[0]['SYSTEM_STATUS']}`)
+                // console.log(`${datasetp[0]['SYSTEM_STATUS']}`)
+                //  console.log(`${datasetpPHASE_INFO}`)
+                for (let s = 0; s < datasetpPHASE_INFO.length; s++) {
+                  if (datasetpPHASE_INFO[s]['OPERATION'] === '0600') {
+                    console.log(datasetpPHASE_INFO[s])
+                  }
+
+                }
+                if (`${datasetp[0]['SYSTEM_STATUS']}`.includes("PCNF")) {
+                  console.log(`------>>NOK`)
+                } else {
+                  console.log(`------>>OK`)
+                }
+                break;
+              }
+
+
+
+            }
+
+          }
+        }
+      }
+
+    } catch (error) {
+
+    }
+
+
+
+    output = []
+  }
+
+
+  //-------------------------------------
+  return res.json(output);
+});
+
+
+// let sapdatatest = {}
 module.exports = router;
 
 
