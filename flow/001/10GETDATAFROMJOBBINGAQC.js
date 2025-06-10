@@ -330,7 +330,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           // response.data['PHASE_INFO'][i]['UOM'] = response.data['HEADER_INFO'][j]['UOM'];
           // response.data['PHASE_INFO'][i]['SYSTEM_STATUS'] = response.data['HEADER_INFO'][j]['SYSTEM_STATUS'];
 
-          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}' and  [STATUSCODE] IS NULL ORDER BY date`
+
+          //and  [STATUSCODE] IS NULL
+          
+          let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}'  ORDER BY date`
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
@@ -344,7 +347,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
 
-                if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) {
+                if ((`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) && (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("DLV") == false)) {
 
                   console.log(db['recordsets'][0][0])
                   if (db['recordsets'][0][0] != undefined) {
