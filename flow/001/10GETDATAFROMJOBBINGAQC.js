@@ -177,7 +177,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GETDATA', async (req, res) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/PPI002GET',
+    // url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
     url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
     headers: {
       'Content-Type': 'application/json'
@@ -243,9 +243,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/PPI004SET',
+    // url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
     url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
-    // url: 'http://127.0.0.1:14090/DATAGWTEST/PPI004SET',
+    // url: 'http://172.23.10.168:14090/DATAGWTEST/PPI004SET',
     headers: {
       'Content-Type': 'application/json'
     },
@@ -304,9 +304,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      // url: 'http://127.0.0.1:14090/DATAGW/PPI002GET',
+      // url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
       url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
-      // url: 'http://127.0.0.1:14090/DATAGWTEST/PPI002GET',
+      // url: 'http://172.23.10.168:14090/DATAGWTEST/PPI002GET',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -332,7 +332,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
           //and  [STATUSCODE] IS NULL
-          
+
           let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}'  ORDER BY date`
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
@@ -368,7 +368,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                         let config = {
                           method: 'post',
                           maxBodyLength: Infinity,
-                          url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                          url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
                           headers: {
                             'Content-Type': 'application/json'
                           },
@@ -395,7 +395,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       //   let config = {
                       //     method: 'post',
                       //     maxBodyLength: Infinity,
-                      //     url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      //     url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
                       //     headers: {
                       //       'Content-Type': 'application/json'
                       //     },
@@ -438,7 +438,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                     let config = {
                       method: 'post',
                       maxBodyLength: Infinity,
-                      url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                      url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
                       headers: {
                         'Content-Type': 'application/json'
                       },
@@ -446,10 +446,13 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                     };
                     await axios.request(config).then(async (response) => {
                       //
+
                       console.log(response.data);
-                      let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                      let dbss = await mssqlR.qurey(queryUP);
+
+
                     });
+                    let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                    let dbsss = await mssqlR.qurey(queryUP);
                   }
                 }
               }
@@ -498,7 +501,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
         //             let config = {
         //               method: 'post',
         //               maxBodyLength: Infinity,
-        //               url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+        //               url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
         //               headers: {
         //                 'Content-Type': 'application/json'
         //               },
@@ -525,7 +528,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
         //             let config = {
         //               method: 'post',
         //               maxBodyLength: Infinity,
-        //               url: 'http://127.0.0.1:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+        //               url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
         //               headers: {
         //                 'Content-Type': 'application/json'
         //               },
@@ -1311,7 +1314,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE_N', async (req, res) => {
               let config = {
                 method: 'post',
                 maxBodyLength: Infinity,
-                // url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
+                // url: 'http://172.23.10.168:14090/DATAGW/QMI002GET',
                 url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/GETDATA',
                 headers: {
                   'Content-Type': 'application/json'
@@ -1345,10 +1348,10 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE_N', async (req, res) => {
                 // console.log(`${datasetp[0]['SYSTEM_STATUS']}`)
                 //  console.log(`${datasetpPHASE_INFO}`)
                 for (let s = 0; s < datasetpPHASE_INFO.length; s++) {
-                  if(datasetpPHASE_INFO[s]['OPERATION'] ==='0600'){
+                  if (datasetpPHASE_INFO[s]['OPERATION'] === '0600') {
                     console.log(datasetpPHASE_INFO[s])
                   }
-                  
+
                 }
                 if (`${datasetp[0]['SYSTEM_STATUS']}`.includes("PCNF")) {
                   console.log(`------>>NOK`)
