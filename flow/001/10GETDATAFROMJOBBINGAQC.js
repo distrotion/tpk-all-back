@@ -590,15 +590,30 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
       // 'token': '8e0647c4-7723-4252-9e09-cfcc54c94475',
       'token': '761a0f38-be2b-49e5-ae04-4860cab1e1d2',
       //
+      //
+      //
       'Content-Type': 'application/json'
     },
     data: data
   };
 
   await axios.request(config)
-    .then((response) => {
+    .then(async(response) => {
       // console.log(JSON.stringify(response.data));
       output = response.data;
+      // console.log(response);
+      // console.log(response['data']['ExportParameter']);
+      if(output['ExportParameter'] != undefined){
+        if(output['ExportParameter']['INACT_NEW'] === 'E'){
+          let querySV = `INSERT INTO [SAPHANADATA].[dbo].[QCFNREC] ([PROCESS_ORDER], [QCFN], [STATUS],[MSGreturn]) VALUES ('${data['ORDERID']}','${output['ExportParameter']['INACT_NEW']}','NOK','${output}')`
+          console.log(querySV);
+          let dbss = await mssqlR.qurey(querySV);
+        }else{
+          let querySV = `INSERT INTO [SAPHANADATA].[dbo].[QCFNREC] ([PROCESS_ORDER], [QCFN], [STATUS],[MSGreturn]) VALUES ('${data['ORDERID']}','${output['ExportParameter']['INACT_NEW']}','OK','${output}')`
+          console.log(querySV);
+          let dbss = await mssqlR.qurey(querySV);
+        }
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -606,7 +621,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
 
 
   //-------------------------------------
-  res.json(output);
+  return res.json(output);
 });
 
 router.post('/10GETDATAFROMJOBBINGAQC/GENFLODER', async (req, res) => {
