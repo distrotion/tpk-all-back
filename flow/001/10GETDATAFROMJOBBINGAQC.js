@@ -508,7 +508,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
                   }
                 } else {
-                  if ((`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) && `${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
+                  //(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) &&
+                  if ( `${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
+           
                     if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
                       let outdata = {
@@ -520,6 +522,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                         "QUANTITYSTATUS": "GOOD"
                       };
                       console.log(outdata);
+          
 
                       let config = {
                         method: 'post',
@@ -532,6 +535,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       };
                       await axios.request(config).then(async (SS) => {
                         //
+                
 
                         if (SS.data['T_RETURN'].length > 0) {
 
@@ -552,9 +556,11 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
               }
 
               if (db['recordsets'][0][0] != undefined) {
+                            console.log("--------->");
                 if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
+                              console.log("--------->");
                   if (`${db['recordsets'][0][0]['NOGOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODENG']}` != 'SEND') {
-
+console.log("--------->");
                     let outdata = {
                       "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
                       "POSTINGDATE": day,
@@ -574,8 +580,11 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       },
                       data: outdata
                     };
+                
                     await axios.request(config).then(async (SS) => {
                       //
+
+                          console.log(SS.data);
 
                       // console.log(response.data);
                       if (SS.data['T_RETURN'].length > 0) {
