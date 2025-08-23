@@ -556,11 +556,11 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
               }
 
               if (db['recordsets'][0][0] != undefined) {
-                            console.log("--------->");
+                    
                 if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
-                              console.log("--------->");
+                    
                   if (`${db['recordsets'][0][0]['NOGOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODENG']}` != 'SEND') {
-console.log("--------->");
+
                     let outdata = {
                       "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
                       "POSTINGDATE": day,
