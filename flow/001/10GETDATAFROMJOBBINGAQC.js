@@ -414,7 +414,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
           //and  [STATUSCODE] IS NULL
-
+          console.log(response.data['HEADER_INFO'][j]['PROCESS_ORDER']);
           let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}'  ORDER BY date`
           let db = await mssqlR.qurey(querySV);
           if (db['recordsets'] != undefined) {
