@@ -414,12 +414,16 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
           //and  [STATUSCODE] IS NULL
-          
+
           let querySV = `SELECT * FROM [SAPHANADATA].[dbo].[HSGOODRECEIVE] where PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}'  ORDER BY date`
           let db = await mssqlR.qurey(querySV);
-          setTimeout(() => {
-     console.log(response.data['HEADER_INFO'][j]['PROCESS_ORDER']);
-    }, 500)
+          // setTimeout(() => {
+          //   console.log(response.data['HEADER_INFO'][j]['PROCESS_ORDER']);
+          // }, 500)
+          console.log(response.data['HEADER_INFO'][j]['PROCESS_ORDER']);
+
+
+
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
 
@@ -512,56 +516,62 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                   }
                 } else {
                   //(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) &&
-                  if ( `${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
-           
-                    if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+                  try {
 
-                      let outdata = {
-                        "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
-                        "POSTINGDATE": day,
-                        "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
-                        "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
-                        "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
-                        "QUANTITYSTATUS": "GOOD"
-                      };
-                      console.log(outdata);
-          
 
-                      let config = {
-                        method: 'post',
-                        maxBodyLength: Infinity,
-                        url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                        headers: {
-                          'Content-Type': 'application/json'
-                        },
-                        data: outdata
-                      };
-                      await axios.request(config).then(async (SS) => {
-                        //
-                
+                    if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
 
-                        if (SS.data['T_RETURN'].length > 0) {
+                      if (`${db['recordsets'][0][0]['GOOD']}` != '') {
 
-                          if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+                        let outdata = {
+                          "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                          "POSTINGDATE": day,
+                          "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                          "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+                          "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                          "QUANTITYSTATUS": "GOOD"
+                        };
+                        console.log(outdata);
 
-                            let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                            console.log(queryUP);
-                            let dbss = await mssqlR.qurey(queryUP);
+
+                        let config = {
+                          method: 'post',
+                          maxBodyLength: Infinity,
+                          url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          data: outdata
+                        };
+                        await axios.request(config).then(async (SS) => {
+                          //
+
+
+                          if (SS.data['T_RETURN'].length > 0) {
+
+                            if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+
+                              let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                              console.log(queryUP);
+                              let dbss = await mssqlR.qurey(queryUP);
+                            }
                           }
-                        }
 
 
-                      });
+                        });
+                      }
                     }
+                  } catch (error) {
+
                   }
 
                 }
               }
 
               if (db['recordsets'][0][0] != undefined) {
-                    
+
                 if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
-                    
+
                   if (`${db['recordsets'][0][0]['NOGOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODENG']}` != 'SEND') {
 
                     let outdata = {
@@ -583,25 +593,25 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                       },
                       data: outdata
                     };
-                
+
                     await axios.request(config).then(async (SS) => {
                       //
 
-                          console.log(SS.data);
+                      console.log(SS.data);
 
                       // console.log(response.data);
                       if (SS.data['T_RETURN'].length > 0) {
 
-                          if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+                        if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
 
-                            // let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                            // console.log(queryUP);
-                            // let dbss = await mssqlR.qurey(queryUP);
-                            let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                            console.log(queryUP);
-                            let dbsss = await mssqlR.qurey(queryUP);
-                          }
+                          // let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                          // console.log(queryUP);
+                          // let dbss = await mssqlR.qurey(queryUP);
+                          let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                          console.log(queryUP);
+                          let dbsss = await mssqlR.qurey(queryUP);
                         }
+                      }
 
 
                     });
@@ -704,7 +714,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
         // }
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(error);
       });
 
   } catch (error) {
