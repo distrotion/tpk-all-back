@@ -362,7 +362,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
   //-------------------------------------
 
   // let output = datatest02;
-  let output = [];
+  let output = {};
 
   try {
 
@@ -427,7 +427,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           if (db['recordsets'] != undefined) {
             if (db['recordsets'].length > 0) {
 
-              output = db['recordsets'][0];
+              // output = db['recordsets'][0];
               if (`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("PCNF")) {
                 //
               } else {
@@ -466,8 +466,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                         await axios.request(config).then(async (SS) => {
                           //
                           if (SS.data['T_RETURN'].length > 0) {
-
+                            output = SS.data['T_RETURN'][0]
                             if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+
 
                               let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
                               console.log(queryUP);
@@ -548,8 +549,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
 
                           if (SS.data['T_RETURN'].length > 0) {
-
+                            output = SS.data['T_RETURN'][0]
                             if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+
 
                               let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
                               console.log(queryUP);
@@ -601,8 +603,9 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
                       // console.log(response.data);
                       if (SS.data['T_RETURN'].length > 0) {
-
+                        output = SS.data['T_RETURN'][0]
                         if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+
 
                           // let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
                           // console.log(queryUP);
