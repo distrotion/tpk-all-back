@@ -242,8 +242,9 @@ router.post('/datacentertest/getsoi8order-ro', async (req, res) => {
 
 
       output = datadb
+      console.log(output)
 
-      if (output.length == 0) {
+      if (output.length === 0) {
         let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
         console.log(querySV)
         let db = await mssqlR.qurey(querySV);
@@ -257,6 +258,195 @@ router.post('/datacentertest/getsoi8order-ro', async (req, res) => {
 
         output = datadb
       }
+
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[NoxProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+      // }
+
+    }
+  } catch (s) { }
+
+  return res.json(output);
+});
+
+
+router.post('/datacentertest/fml', async (req, res) => {
+  //-------------------------------------
+  console.log("----datacentertest/fml----");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = [];
+  try {
+    if (input[`Fml`] !== undefined) {
+
+
+
+      let queryS = `SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeLQ] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeNox] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeNR] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipePM] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeHydro] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeGUM] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeCoil] where Fml = '${input[`Fml`]}' and Ver = '0' 
+union SELECT [ID],[Fml],[Ver],[A],[Chm],[Bc] FROM [ScadaReport].[dbo].[RecipeCMC] where Fml = '${input[`Fml`]}' and Ver = '0' 
+ORDER by ID asc
+    `
+      // console.log(queryS)
+
+      let db = await mssql.qurey(queryS);
+      let datadb = [];
+      if (db['recordsets'] != undefined) {
+        if (db['recordsets'].length > 0) {
+          datadb = db['recordsets'][0];
+        }
+      }
+
+
+      output = datadb
+      console.log(output)
+
+    
+
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[CoilProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[HydroProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PLXprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[LQprocessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[PMProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+
+      // }
+      // if (output.length === 0) {
+
+      //   let queryS = `SELECT * FROM [ScadaReport].[dbo].[NoxProcessinfo] where NumOrder = '${input[`ORDER`]}' order by RecordTimeStart desc`
+      //   let db = await mssql.qurey(queryS);
+      //   let datadb = db['recordsets'][0];
+      //   output = datadb
+
+      // }
+
+    }
+  } catch (s) { }
+
+  return res.json(output);
+});
+
+router.post('/datacentertest/getconfirm', async (req, res) => {
+  //-------------------------------------
+  console.log("----datacentertest/getconfirm----");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = [];
+  try {
+    if (input[`order`] !== undefined) {
+
+
+
+      let queryS = `SELECT * FROM [SOI8LOG].[dbo].[confirmweightrecore] where [order] = '${input[`order`]}' order by date desc
+    `
+      console.log(queryS)
+
+      let db = await mssqlR.qurey(queryS);
+      let datadb = [];
+      if (db['recordsets'] != undefined) {
+        if (db['recordsets'].length > 0) {
+          datadb = db['recordsets'][0];
+        }
+      }
+
+
+      output = datadb
+      console.log(output)
+
+    
 
       // if (output.length === 0) {
 
