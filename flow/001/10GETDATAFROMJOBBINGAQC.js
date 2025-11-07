@@ -519,48 +519,51 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                   //(`${response.data['HEADER_INFO'][j]['SYSTEM_STATUS']}`.includes("CNF")) &&
                   try {
 
-
-                    if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
-
-                      if (`${db['recordsets'][0][0]['GOOD']}` != '') {
-
-                        let outdata = {
-                          "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
-                          "POSTINGDATE": day,
-                          "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
-                          "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
-                          "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
-                          "QUANTITYSTATUS": "GOOD"
-                        };
-                        console.log(outdata);
+                    if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
 
 
-                        let config = {
-                          method: 'post',
-                          maxBodyLength: Infinity,
-                          url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
-                          headers: {
-                            'Content-Type': 'application/json'
-                          },
-                          data: outdata
-                        };
-                        await axios.request(config).then(async (SS) => {
-                          //
+                      if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
+
+                        if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+
+                          let outdata = {
+                            "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
+                            "POSTINGDATE": day,
+                            "MATERIAL": `${response.data['HEADER_INFO'][j]['MATERIAL']}`,
+                            "QUANTITY": `${db['recordsets'][0][0]['GOOD']}`,
+                            "UNIT": `${response.data['HEADER_INFO'][j]['UOM']}`,
+                            "QUANTITYSTATUS": "GOOD"
+                          };
+                          console.log(outdata);
 
 
-                          if (SS.data['T_RETURN'].length > 0) {
-                            output = SS.data['T_RETURN'][0]
-                            if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+                          let config = {
+                            method: 'post',
+                            maxBodyLength: Infinity,
+                            url: 'http://172.23.10.168:14094/10GETDATAFROMJOBBINGAQC/POSTTOSTORE',
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            data: outdata
+                          };
+                          await axios.request(config).then(async (SS) => {
+                            //
 
 
-                              let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
-                              console.log(queryUP);
-                              let dbss = await mssqlR.qurey(queryUP);
+                            if (SS.data['T_RETURN'].length > 0) {
+                              output = SS.data['T_RETURN'][0]
+                              if (`${SS.data['T_RETURN'][0]['TYPE']}` === `S`) {
+
+
+                                let queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET  [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}';`
+                                console.log(queryUP);
+                                let dbss = await mssqlR.qurey(queryUP);
+                              }
                             }
-                          }
 
 
-                        });
+                          });
+                        }
                       }
                     }
                   } catch (error) {
