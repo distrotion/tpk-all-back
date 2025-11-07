@@ -442,7 +442,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
                   if (db['recordsets'][0][0] != undefined) {
 
                     if (db['recordsets'][0][0][`PROCESS_ORDER`] === `00${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`) {
-                      if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+                      if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['GOOD']}` != '0') {
 
                         let outdata = {
                           "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
@@ -524,7 +524,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
                       if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['STATUSCODE']}` != 'SEND') {
 
-                        if (`${db['recordsets'][0][0]['GOOD']}` != '') {
+                        if (`${db['recordsets'][0][0]['GOOD']}` != '' && `${db['recordsets'][0][0]['GOOD']}` != '0') {
 
                           let outdata = {
                             "PROCESSORDER": `${response.data['HEADER_INFO'][j]['PROCESS_ORDER']}`,
