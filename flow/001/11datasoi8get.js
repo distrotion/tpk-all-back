@@ -804,5 +804,41 @@ Order by ID ASC`
 });
 
 
+router.post('/datacentertest/getconfirmlist', async (req, res) => {
+  //-------------------------------------
+  console.log("----datacentertest/getconfirmlist----");
+  console.log(req.body);
+  let input = req.body;
+  //-------------------------------------
+  let output = [];
+  try {
+    if (input[`query`] !== undefined) {
+
+
+
+      let queryS = `${input[`query`]}`
+      console.log(queryS)
+
+      let db = await mssqlR.qurey(queryS);
+      let datadb = [];
+      if (db['recordsets'] != undefined) {
+        if (db['recordsets'].length > 0) {
+          datadb = db['recordsets'][0];
+        }
+      }
+
+
+      output = datadb
+      console.log(output)
+
+ 
+
+    }
+  } catch (s) { }
+
+  return res.json(output);
+});
+
+
 module.exports = router;
 
