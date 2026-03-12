@@ -15,20 +15,30 @@ const config = {
   }
 }
 
-exports.qurey = async (input) => {
+exports.qureyR = async (input) => {
   try {
     await sql.connect(config)
+    let out;
     const result = await sql.query(input).then((v) => {
-        // console.log(`---------------`);
-        // console.log(v);  
-        out = v;   
-        // console.log(`---------------`);
-        return v;
-      
-      }).then(() => sql.close())
-    
-      //  console.dir(result)
-      return out;
+      out = v;
+      return v;
+    }).then(() => sql.close())
+    return out;
+  } catch (err) {
+    return err;
+  }
+};
+
+exports.qureyRP = async (queryString, params = {}) => {
+  try {
+    await sql.connect(config);
+    const request = new sql.Request();
+    for (const [key, value] of Object.entries(params)) {
+      request.input(key, value);
+    }
+    const result = await request.query(queryString);
+    await sql.close();
+    return result;
   } catch (err) {
     return err;
   }
