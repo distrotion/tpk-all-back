@@ -247,7 +247,7 @@ router.post('/datacentertest/getsoi8order-ro', async (req, res) => {
       if (output.length === 0) {
         let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
         console.log(querySV)
-        let db = await mssqlR.qurey(querySV);
+        let db = await mssqlR.qureyR(querySV);
         let datadb = [];
         console.log(db['recordsets'])
         if (db['recordsets'] != undefined) {
@@ -434,7 +434,7 @@ router.post('/datacentertest/getconfirm', async (req, res) => {
     `
       console.log(queryS)
 
-      let db = await mssqlR.qurey(queryS);
+      let db = await mssqlR.qureyR(queryS);
       let datadb = [];
       if (db['recordsets'] != undefined) {
         if (db['recordsets'].length > 0) {
@@ -618,7 +618,7 @@ router.post('/datacentertest/getsoi8order-pack-or', async (req, res) => {
 
       let querySV = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADApackinginfo]  where NumOrder = '${input[`ORDER`]}'`
       console.log(querySV);
-      let db = await mssqlR.qurey(querySV);
+      let db = await mssqlR.qureyR(querySV);
 
       // console.log(db);
       // let datadb = db['recordsets'][0];
@@ -707,7 +707,7 @@ router.post('/datacentertest/PackNoSCADA', async (req, res) => {
 //    let querySV = `SELECT [RecordTimeStart],[RecordTimeStop],[NumOrder],[NumPackSize1],[NumQuantity1],[NumPackSize2],[NumQuantity2],[NumPackSize3],[NumQuantity3],[NumWeight],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADApackinginfo]  where NumOrder = '${input[`ORDER`]}'`
     let queryS = `INSERT INTO [SOI8LOG].[dbo].[NonSCADApackinginfo] ([NumOrder], [NumPackSize1], [NumPackSize2], [NumPackSize3], [NumQuantity1], [NumQuantity2], [NumWeight], [NumQuantity3]) VALUES ('${input[`NumOrder`]}', '${input[`NumPackSize1`]}', '${input[`NumPackSize2`]}', '${input[`NumPackSize3`]}', '${input[`NumQuantity1`]}', '${input[`NumQuantity2`]}', '${input[`NumQuantity3`]}', '${input[`NumWeight`]}');`
     console.log(queryS)
-    let db = await mssqlR.qurey(queryS);
+    let db = await mssqlR.qureyR(queryS);
     console.log(db)
     if (db['recordsets'].length > 0) {
       let datadb = db['recordsets'][0];
@@ -733,7 +733,7 @@ router.post('/datacentertest/planning', async (req, res) => {
 
     let queryS = ` SELECT * FROM [SOI8_INVs].[dbo].[incomming] WHERE Bsc_start='${input[`monyh`]}-${input[`day`]}-${input[`year`]}' order by Bsc_start desc`
     console.log(queryS)
-    let db = await mssqlR.qurey(queryS);
+    let db = await mssqlR.qureyR(queryS);
     console.log(db)
     if (db['recordsets'].length > 0) {
       let datadb = db['recordsets'][0];
@@ -761,7 +761,7 @@ router.post('/datacentertest/selecfml', async (req, res) => {
 
     let queryS = ` SELECT * FROM [ScadaReport].[dbo].[SOI8_ProductName] where [CP_Master] = '${input[`MAT`]}';`
     // console.log(queryS)
-    let db = await mssqlR.qurey(queryS);
+    let db = await mssqlR.qureyR(queryS);
     console.log(db)
     if (db['recordsets'].length > 0) {
       let datadb = db['recordsets'][0];
@@ -783,7 +783,7 @@ union SELECT ID,Fml,Ver,A,Chm,Bc,W From [ScadaReport].[dbo].[RecipeRTM] where Fm
 union SELECT ID,Fml,Ver,A,Chm,Bc,W From [ScadaReport].[dbo].[RecipeSCM] where Fml = '${FML_Name[0]}' and Ver = '0' and Chm Not LIKE '%+%'
 Order by ID ASC`
 
-        let db = await mssqlR.qurey(query2);
+        let db = await mssqlR.qureyR(query2);
         console.log(db)
         if (db['recordsets'].length > 0) {
           let datadb = db['recordsets'][0];
@@ -819,7 +819,7 @@ router.post('/datacentertest/getconfirmlist', async (req, res) => {
       let queryS = `${input[`query`]}`
       console.log(queryS)
 
-      let db = await mssqlR.qurey(queryS);
+      let db = await mssqlR.qureyR(queryS);
       let datadb = [];
       if (db['recordsets'] != undefined) {
         if (db['recordsets'].length > 0) {

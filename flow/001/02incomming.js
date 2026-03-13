@@ -46,7 +46,7 @@ router.post('/INC/inputdata', async (req, res) => {
 
   console.log(query)
 
-  let db = await mssqlR.qurey(query);
+  let db = await mssqlR.qureyR(query);
 
   console.log(db)
 
@@ -213,7 +213,7 @@ router.post('/QMINCOMING/UDSAVEQC', async (req, res) => {
       VALUES ('${input['UDTEMPSAVE']['PROCESS_ORDER']}', '${input['UDTEMPSAVE']['GOOD']}', '${input['UDTEMPSAVE']['NGOOD']}', '${input['UDTEMPSAVE']['UD_CODE_GROUP']}', '${input['UDTEMPSAVE']['UD_CODE']}', '${input['UDTEMPSAVE']['CODE_TEXT']}', '');`
 
       console.log(querySV);
-      let db = mssqlR.qurey(querySV);
+      let db = mssqlR.qureyR(querySV);
     })
     .catch((error) => {
       // console.log(error);

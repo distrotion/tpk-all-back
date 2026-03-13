@@ -238,7 +238,7 @@ var axios = require('axios');
 //     if (output.length == 0) {
 //       let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
 //       console.log(querySV)
-//       let db = await mssqlR.qurey(querySV);
+//       let db = await mssqlR.qureyR(querySV);
 //       let datadb = db['recordsets'][0];
 //       output = datadb
 //     }
@@ -402,7 +402,7 @@ var axios = require('axios');
 // //     if (output.length == 0) {
 // //       let querySV = `SELECT [RecordTimeStart],[NumOrder],[NumMode],[StrChemical],[StrLotNum],[StrBarcode],[NumModeOper],[NumStep],[NumSp],[NumAct],[dtDate] FROM [SOI8LOG].[dbo].[NonSCADAProcessinfo] where NumOrder = '${input[`ORDER`]}'  order by NumStep desc`
 
-// //       let db = await mssqlR.qurey(querySV);
+// //       let db = await mssqlR.qureyR(querySV);
 // //       let datadb = db['recordsets'][0];
 // //       output = datadb
 // //     }
@@ -482,7 +482,7 @@ var axios = require('axios');
 
 //     let queryS = ` SELECT * FROM [SOI8_INVs].[dbo].[incomming] WHERE Bsc_start='${input[`monyh`]}-${input[`day`]}-${input[`year`]}' order by Bsc_start desc`
 //     console.log(queryS)
-//     let db = await mssqlR.qurey(queryS);
+//     let db = await mssqlR.qureyR(queryS);
 //     console.log(db)
 //     if (db['recordsets'].length > 0) {
 //       let datadb = db['recordsets'][0];
@@ -510,7 +510,7 @@ var axios = require('axios');
 
 //     let queryS = ` SELECT * FROM [ScadaReport].[dbo].[SOI8_ProductName] where [CP_Master] = '${input[`MAT`]}';`
 //     // console.log(queryS)
-//     let db = await mssqlR.qurey(queryS);
+//     let db = await mssqlR.qureyR(queryS);
 //     console.log(db)
 //     if (db['recordsets'].length > 0) {
 //       let datadb = db['recordsets'][0];
@@ -532,7 +532,7 @@ var axios = require('axios');
 // union SELECT ID,Fml,Ver,A,Chm,Bc,W From [ScadaReport].[dbo].[RecipeSCM] where Fml = '${FML_Name[0]}' and Ver = '0' and Chm Not LIKE '%+%'
 // Order by ID ASC`
 
-//         let db = await mssqlR.qurey(query2);
+//         let db = await mssqlR.qureyR(query2);
 //         console.log(db)
 //         if (db['recordsets'].length > 0) {
 //           let datadb = db['recordsets'][0];

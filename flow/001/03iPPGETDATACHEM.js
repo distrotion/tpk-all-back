@@ -46,7 +46,7 @@ router.post('/INC/inputdata', async (req, res) => {
 
   console.log(query)
 
-  let db = await mssqlR.qurey(query);
+  let db = await mssqlR.qureyR(query);
 
   console.log(db)
 
