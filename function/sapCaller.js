@@ -5,7 +5,10 @@ const path  = require('path');
 const SAP_BASE_URL  = 'http://172.23.10.168:14090/DATAGW';
 const SAP_LOG_BASE  = path.join(__dirname, '..', 'logs', 'sap');
 
-const CSV_HEADER = 'datetime,api,duration_ms,return_type,return_message,status,error\n';
+const CSV_HEADER = 'datetime,api,duration_ms,input,return_type,return_message,status,error\n';
+
+// API ที่ไม่ต้อง log
+const NO_LOG_APIS = new Set(['PPI002GET', 'QMI002GET']);
 
 // cache folder สร้างแล้ว เพื่อไม่ต้อง existsSync ทุกครั้ง
 const createdDirs = new Set();
@@ -24,7 +27,7 @@ function csvEsc(val) {
     : s;
 }
 
-function writeLog(apiName, durationMs, returnType, returnMessage, status, errMsg = '') {
+function writeLog(apiName, durationMs, input, returnType, returnMessage, status, errMsg = '') {
   try {
     const now      = new Date();
     const dateStr  = now.toISOString().slice(0, 10);
@@ -34,9 +37,10 @@ function writeLog(apiName, durationMs, returnType, returnMessage, status, errMsg
     ensureDir(apiDir);
     const filePath = path.join(apiDir, `${dateStr}.csv`);
     if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, CSV_HEADER, 'utf8');
+    const inputStr = typeof input === 'object' ? JSON.stringify(input) : String(input ?? '');
     const line = [
       csvEsc(datetime), csvEsc(apiName),       csvEsc(durationMs),
-      csvEsc(returnType), csvEsc(returnMessage), csvEsc(status), csvEsc(errMsg),
+      csvEsc(inputStr), csvEsc(returnType), csvEsc(returnMessage), csvEsc(status), csvEsc(errMsg),
     ].join(',') + '\n';
     fs.appendFileSync(filePath, line, 'utf8');
   } catch (e) {
@@ -70,10 +74,10 @@ async function callSAPAPI(apiName, data) {
     } else if (Array.isArray(d?.['ET_INSPCHAR'])) {
       retType = `ET_INSPCHAR:${d['ET_INSPCHAR'].length}`;
     }
-    writeLog(apiName, Date.now() - t0, retType, retMsg, 'OK');
+    if (!NO_LOG_APIS.has(apiName)) writeLog(apiName, Date.now() - t0, data, retType, retMsg, 'OK');
     return d;
   } catch (err) {
-    writeLog(apiName, Date.now() - t0, '', '', 'ERROR', err.message);
+    if (!NO_LOG_APIS.has(apiName)) writeLog(apiName, Date.now() - t0, data, '', '', 'ERROR', err.message);
     console.log(`${apiName} error:`, err.message);
     return null;
   }
