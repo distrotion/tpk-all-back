@@ -329,7 +329,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
   let input = req.body;
   //-------------------------------------
 
-  let output = {};
+  let output = [];
 
   // helper: call PPI004SET via central caller (logs to logs/sap/) + autostore detail log
   async function postToSAP(outdata) {
@@ -397,7 +397,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
           console.log(outdata);
           const sapResult = await postToSAP(outdata);
           if (sapResult && sapResult['T_RETURN'] && sapResult['T_RETURN'].length > 0) {
-            output = sapResult['T_RETURN'][0];
+            output.push(sapResult['T_RETURN'][0]) ;
             if (`${sapResult['T_RETURN'][0]['TYPE']}` === 'S') {
               const queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET [STATUSCODE] = 'SEND' WHERE PROCESS_ORDER = '00${hdr['PROCESS_ORDER']}';`;
               console.log(queryUP);
@@ -420,7 +420,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
         console.log(outdata);
         const sapResult = await postToSAP(outdata);
         if (sapResult && sapResult['T_RETURN'] && sapResult['T_RETURN'].length > 0) {
-          output = sapResult['T_RETURN'][0];
+          output.push(sapResult['T_RETURN'][0]) ;
           if (`${sapResult['T_RETURN'][0]['TYPE']}` === 'S') {
             const queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET [STATUSCODENG] = 'SEND' WHERE PROCESS_ORDER = '00${hdr['PROCESS_ORDER']}';`;
             console.log(queryUP);

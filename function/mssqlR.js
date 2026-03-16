@@ -34,38 +34,66 @@ async function getPool() {
   return pool;
 }
 
+const MAX_RETRY   = 5;   // จำนวนครั้งที่ retry สูงสุด
+const RETRY_DELAY = 2000; // หน่วง ms ระหว่าง retry
+
+const isInsert = (q) => /^\s*INSERT\s/i.test(q);
+const sleep    = (ms) => new Promise(r => setTimeout(r, ms));
+
+// ────────────────────────────────────────────────
+// qureyR — query ธรรมดา (INSERT จะ retry อัตโนมัติ)
+// ────────────────────────────────────────────────
 exports.qureyR = async (input) => {
-  const t0 = Date.now();
-  try {
-    const p      = await getPool();
-    const result = await p.request().query(input);
-    const rows   = result.recordset?.length ?? 0;
-    logger.writeLog(SERVER, 'qureyR', input, Date.now() - t0, rows, 'OK');
-    return result;
-  } catch (err) {
-    logger.writeLog(SERVER, 'qureyR', input, Date.now() - t0, null, 'ERROR', err.message);
-    console.log('qureyR error:', err);
-    pool = null;
-    return err;
+  const retries = isInsert(input) ? MAX_RETRY : 1;
+  let lastErr;
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const t0 = Date.now();
+    try {
+      const p      = await getPool();
+      const result = await p.request().query(input);
+      const rows   = result.recordset?.length ?? 0;
+      logger.writeLog(SERVER, 'qureyR', input, Date.now() - t0, rows, 'OK');
+      return result;
+    } catch (err) {
+      lastErr = err;
+      pool    = null; // reset pool เพื่อให้ reconnect รอบหน้า
+      logger.writeLog(SERVER, 'qureyR', input, Date.now() - t0, null,
+        attempt < retries ? `RETRY(${attempt})` : 'ERROR', err.message);
+      console.log(`qureyR error (attempt ${attempt}/${retries}):`, err.message);
+      if (attempt < retries) await sleep(RETRY_DELAY * attempt);
+    }
   }
+  return lastErr;
 };
 
+// ────────────────────────────────────────────────
+// qureyRP — parameterised query (INSERT จะ retry อัตโนมัติ)
+// ────────────────────────────────────────────────
 exports.qureyRP = async (queryString, params = {}) => {
-  const t0 = Date.now();
-  try {
-    const p       = await getPool();
-    const request = p.request();
-    for (const [key, value] of Object.entries(params)) {
-      request.input(key, value);
+  const retries = isInsert(queryString) ? MAX_RETRY : 1;
+  let lastErr;
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    const t0 = Date.now();
+    try {
+      const p       = await getPool();
+      const request = p.request();
+      for (const [key, value] of Object.entries(params)) {
+        request.input(key, value);
+      }
+      const result = await request.query(queryString);
+      const rows   = result.recordset?.length ?? 0;
+      logger.writeLog(SERVER, 'qureyRP', queryString, Date.now() - t0, rows, 'OK');
+      return result;
+    } catch (err) {
+      lastErr = err;
+      pool    = null;
+      logger.writeLog(SERVER, 'qureyRP', queryString, Date.now() - t0, null,
+        attempt < retries ? `RETRY(${attempt})` : 'ERROR', err.message);
+      console.log(`qureyRP error (attempt ${attempt}/${retries}):`, err.message);
+      if (attempt < retries) await sleep(RETRY_DELAY * attempt);
     }
-    const result = await request.query(queryString);
-    const rows   = result.recordset?.length ?? 0;
-    logger.writeLog(SERVER, 'qureyRP', queryString, Date.now() - t0, rows, 'OK');
-    return result;
-  } catch (err) {
-    logger.writeLog(SERVER, 'qureyRP', queryString, Date.now() - t0, null, 'ERROR', err.message);
-    console.log('qureyRP error:', err);
-    pool = null;
-    return err;
   }
+  return lastErr;
 };
