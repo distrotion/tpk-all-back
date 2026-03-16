@@ -1,37 +1,28 @@
-const axios = require('axios')
+const axios = require('axios');
 
-exports.post =  async (url,body) => {
-    
-    await axios.post( url, body).then(async res => {
-    // console.log(`statusCode: ${res.status}`)
-    // console.log(res)
-    // console.log(res.data);
-    output =  res.data  
-  })
-  .catch(async error => {
-    console.error(error.response.status)
-    output = await error.response.status
-    // outputr = `err`
-  })
+// instance พร้อม timeout default 30s
+const instance = axios.create({
+  timeout: 30000,
+});
 
-  return output;
-     
+exports.post = async (url, body) => {
+  try {
+    const res = await instance.post(url, body);
+    return res.data;
+  } catch (err) {
+    const status = err.response?.status ?? err.code ?? err.message;
+    console.error('axios.post error:', url, status);
+    return status;
+  }
 };
 
-exports.get =  async (url) => {
-    
-    await axios.get(url).then(async res => {
-    // console.log(`statusCode: ${res.status}`)
-    // console.log(res)
-    // console.log(res.data);
-    output =  res.data  
-  })
-  .catch(async error => {
-    console.error(error.response.status)
-    output = await error.response.status
-    // outputr = `err`
-  })
-
-  return output;
-     
+exports.get = async (url) => {
+  try {
+    const res = await instance.get(url);
+    return res.data;
+  } catch (err) {
+    const status = err.response?.status ?? err.code ?? err.message;
+    console.error('axios.get error:', url, status);
+    return status;
+  }
 };

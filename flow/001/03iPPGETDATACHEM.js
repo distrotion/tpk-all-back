@@ -4,6 +4,7 @@ var mssqlR = require('../../function/mssqlR');
 var mongodb = require('../../function/mongodb');
 var httpreq = require('../../function/axios');
 var axios = require('axios');
+const { callSAPAPI } = require('../../function/sapCaller');
 
 
 router.get('/TEST', async (req, res) => {
@@ -67,44 +68,7 @@ router.post('/03iPPGETDATACHEM/GETDATA', async (req, res) => {
 
   // "ORD_ST_DATE_FR": "01.03.2025",
   // "ORD_ST_DATE_TO": "07.03.2025",
-  const axios = require('axios');
-  // let data = {
-
-  //   "HEADER": {
-  //     "PLANT": "1000",
-  //     "ORD_ST_DATE_FR": "01.03.2025",
-  //     "ORD_ST_DATE_TO": "10.03.2025",
-  //     "ORDER_TYPE": "",
-  //     "PROD_SUP": ""
-  //   },
-  //   "PROC_ORD": [
-  //     {
-  //       "PROCESS_ORDER": "",
-  //       "MATERIAL": ""
-  //     }
-  //   ]
-  // };
-  let data = input;
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/PPI001GET',
-    url: 'http://172.23.10.168:14090/DATAGW/PPI001GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('PPI001GET', input) ?? {};
 
 
   //-------------------------------------
@@ -122,28 +86,7 @@ router.post('/03iPPGETDATACHEM/SETI005DATA', async (req, res) => {
   // let output = datatest01;
   let output = {};
 
-  const axios = require('axios');
-  let data = input;
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/PPI005SET',
-    url: 'http://172.23.10.168:14090/DATAGW/PPI005SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('PPI005SET', input) ?? {};
 
 
   //-------------------------------------
@@ -160,29 +103,7 @@ router.post('/03iPPGETDATACHEM/SETI003DATA', async (req, res) => {
   // let output = datatest01;
   let output = {};
 
-  const axios = require('axios');
-  let data = input
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/PPI003SET',
-    url: 'http://172.23.10.168:14090/DATAGW/PPI003SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      console.log(response.data);
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('PPI003SET', input) ?? {};
 
 
   //-------------------------------------

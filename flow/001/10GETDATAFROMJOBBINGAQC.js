@@ -7,13 +7,47 @@ var httpreq = require('../../function/axios');
 var axios = require('axios');
 const fs = require('fs');
 const path = require('path');
+const { callSAPAPI } = require('../../function/sapCaller');
 
 
 function base64ToPdf(base64String, outputFilePath) {
   const data = Buffer.from(base64String, 'base64');
-
   fs.writeFileSync(outputFilePath, data);
 }
+
+// ─── SAP Post Logger ──────────────────────────────────────────────────────────
+const SAP_LOG_DIR = path.join(__dirname, '..', '..', 'logs', 'autostore');
+if (!fs.existsSync(SAP_LOG_DIR)) fs.mkdirSync(SAP_LOG_DIR, { recursive: true });
+
+const SAP_CSV_HEADER = 'datetime,process_order,material,quantity,qty_status,sap_type,sap_message,status,error\n';
+
+function csvEsc(val) {
+  const s = String(val ?? '');
+  return (s.includes(',') || s.includes('"') || s.includes('\n'))
+    ? '"' + s.replace(/"/g, '""') + '"'
+    : s;
+}
+
+function writeSAPLog(processOrder, material, quantity, qtyStatus, sapType, sapMessage, status, errMsg = '') {
+  try {
+    const now      = new Date();
+    const dateStr  = now.toISOString().slice(0, 10);
+    const datetime = now.toISOString().replace('T', ' ').slice(0, 23);
+    const filePath = path.join(SAP_LOG_DIR, `${dateStr}.csv`);
+    if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, SAP_CSV_HEADER, 'utf8');
+    const line = [
+      csvEsc(datetime), csvEsc(processOrder), csvEsc(material),
+      csvEsc(quantity),  csvEsc(qtyStatus),    csvEsc(sapType),
+      csvEsc(sapMessage), csvEsc(status),       csvEsc(errMsg),
+    ].join(',') + '\n';
+    fs.appendFileSync(filePath, line, 'utf8');
+  } catch (e) {
+    console.error('writeSAPLog error:', e.message);
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
+// callSAPAPI — imported from ../../function/sapCaller (logs to logs/sap/YYYY-MM-DD_APINAME.csv)
 
 Number.prototype.pad = function (n) {
   if (n === undefined)
@@ -155,44 +189,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/GETDATA', async (req, res) => {
 
   // "ORD_ST_DATE_FR": "01.03.2025",
   // "ORD_ST_DATE_TO": "07.03.2025",
-  const axios = require('axios');
-  // let data = {
-
-  //   "HEADER": {
-  //     "PLANT": "1000",
-  //     "ORD_ST_DATE_FR": "01.03.2025",
-  //     "ORD_ST_DATE_TO": "10.03.2025",
-  //     "ORDER_TYPE": "",
-  //     "PROD_SUP": ""
-  //   },
-  //   "PROC_ORD": [
-  //     {
-  //       "PROCESS_ORDER": "",
-  //       "MATERIAL": ""
-  //     }
-  //   ]
-  // };
-  let data = input;
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
-    url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('PPI002GET', input) ?? {};
 
 
   //-------------------------------------
@@ -319,36 +316,7 @@ router.post('/10GETDATAFROMJOBBINGAQC/POSTTOSTORE', async (req, res) => {
   // let output = datatest04;
   let output = {};
 
-  const axios = require('axios');
-  let data = input
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
-    url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
-    // url: 'http://172.23.10.168:14090/DATAGWTEST/PPI004SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      console.log(response.data);
-      output = response.data
-      // if (output.length > 0) {
-      //   console.log(output[0]['TYPE']);
-      //   if (output[0]['TYPE'] != 'E') {
-
-      //   }
-      // }
-
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('PPI004SET', input) ?? {};
 
   //-------------------------------------
   res.json(output);
@@ -363,19 +331,16 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
 
   let output = {};
 
-  // helper: call PPI004SET directly (ไม่ self-call POSTTOSTORE เพื่อหลีกเลี่ยง ConnectionRefused)
+  // helper: call PPI004SET via central caller (logs to logs/sap/) + autostore detail log
   async function postToSAP(outdata) {
-    let result = null;
-    await axios.request({
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
-      headers: { 'Content-Type': 'application/json' },
-      data: outdata
-    }).then((SS) => {
-      console.log(SS.data);
-      result = SS.data;
-    }).catch((err) => { console.log('PPI004SET error:', err.message); });
+    const result = await callSAPAPI('PPI004SET', outdata);
+    const ret    = result?.['T_RETURN']?.[0] ?? {};
+    writeSAPLog(
+      outdata['PROCESSORDER'], outdata['MATERIAL'],
+      outdata['QUANTITY'],     outdata['QUANTITYSTATUS'],
+      ret['TYPE'] ?? '', ret['MESSAGE'] ?? '',
+      result ? 'OK' : 'ERROR'
+    );
     return result;
   }
 
@@ -384,22 +349,12 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE', async (req, res) => {
     const day = `${(d.getDate()).pad(2)}.${(d.getMonth() + 1).pad(2)}.${d.getFullYear()}`;
 
     // Step 1: ดึง HEADER_INFO จาก SAP ก่อน
-    const sapResponse = await axios.request({
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
-      headers: { 'Content-Type': 'application/json' },
-      data: input
-    }).catch((error) => {
-      console.log('PPI002GET error:', error.message);
-      return null;
-    });
-
-    if (!sapResponse || !sapResponse.data['HEADER_INFO'] || sapResponse.data['HEADER_INFO'].length === 0) {
+    const sapData = await callSAPAPI('PPI002GET', input);
+    if (!sapData || !sapData['HEADER_INFO'] || sapData['HEADER_INFO'].length === 0) {
       return res.json(output);
     }
 
-    const headerList = sapResponse.data['HEADER_INFO'];
+    const headerList = sapData['HEADER_INFO'];
 
     // Step 2: batch SELECT 1 ครั้ง แทนที่จะ query ทีละ order
     const inClause = headerList.map(h => `'00${h['PROCESS_ORDER']}'`).join(',');
@@ -495,7 +450,6 @@ router.post('/10GETDATAFROMJOBBINGAQC/QCFN', async (req, res) => {
 
   let output = {};
 
-  const axios = require('axios');
   // let data = JSON.stringify({
   //   "BAPI_NAME": "ZFMPP_QCFN_IN",
   //   "ORDERID": "2510000050",
@@ -1198,22 +1152,16 @@ async function postQtyToSAP(headerInfo, quantity, quantityStatus, postingDate, p
     "QUANTITYSTATUS": quantityStatus
   };
   console.log(outdata);
+  const sapData = await callSAPAPI('PPI004SET', outdata);
   let result = null;
-  await axios.request({
-    method: 'post', maxBodyLength: Infinity,
-    url: 'http://172.23.10.168:14090/DATAGW/PPI004SET',
-    headers: { 'Content-Type': 'application/json' },
-    data: outdata
-  }).then(async (SS) => {
-    if (SS.data['T_RETURN'] && SS.data['T_RETURN'].length > 0) {
-      result = SS.data['T_RETURN'][0];
-      if (`${SS.data['T_RETURN'][0]['TYPE']}` === 'S') {
-        const queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET [${statusField}] = 'SEND' WHERE PROCESS_ORDER = '${processOrderDB}';`;
-        console.log(queryUP);
-        await mssqlR.qureyR(queryUP);
-      }
+  if (sapData?.['T_RETURN']?.length > 0) {
+    result = sapData['T_RETURN'][0];
+    if (`${result['TYPE']}` === 'S') {
+      const queryUP = `UPDATE [SAPHANADATA].[dbo].[HSGOODRECEIVE] SET [${statusField}] = 'SEND' WHERE PROCESS_ORDER = '${processOrderDB}';`;
+      console.log(queryUP);
+      await mssqlR.qureyR(queryUP);
     }
-  }).catch((err) => { console.log(err); });
+  }
   return result;
 }
 
@@ -1270,22 +1218,16 @@ router.post('/10GETDATAFROMJOBBINGAQC/AUTOSTORE_N', async (req, res) => {
       };
       console.log(`GETDATA window [j=${j}]: ${notFoundYet.length} orders`);
 
-      await axios.request({
-        method: 'post', maxBodyLength: Infinity,
-        url: 'http://172.23.10.168:14090/DATAGW/PPI002GET',
-        headers: { 'Content-Type': 'application/json' },
-        data: sapPayload
-      }).then((response) => {
-        if (response.data['HEADER_INFO'] && response.data['HEADER_INFO'].length > 0) {
-          for (const h of response.data['HEADER_INFO']) {
-            // SAP คืน PROCESS_ORDER โดยไม่มี prefix "00", DB เก็บแบบมี "00"
-            const dbKey = dataUDlist.find(r => r['PROCESS_ORDER'] === `00${h['PROCESS_ORDER']}` || r['PROCESS_ORDER'] === h['PROCESS_ORDER']);
-            if (dbKey && !headerMap[dbKey['PROCESS_ORDER']]) {
-              headerMap[dbKey['PROCESS_ORDER']] = h;
-            }
+      const sapRes = await callSAPAPI('PPI002GET', sapPayload);
+      if (sapRes?.['HEADER_INFO']?.length > 0) {
+        for (const h of sapRes['HEADER_INFO']) {
+          // SAP คืน PROCESS_ORDER โดยไม่มี prefix "00", DB เก็บแบบมี "00"
+          const dbKey = dataUDlist.find(r => r['PROCESS_ORDER'] === `00${h['PROCESS_ORDER']}` || r['PROCESS_ORDER'] === h['PROCESS_ORDER']);
+          if (dbKey && !headerMap[dbKey['PROCESS_ORDER']]) {
+            headerMap[dbKey['PROCESS_ORDER']] = h;
           }
         }
-      }).catch((err) => { console.log(`GETDATA error [j=${j}]:`, err.message); });
+      }
     }
 
     // Phase 2: ส่งข้อมูลแต่ละ record — GOOD และ NG parallel ต่อ record

@@ -4,6 +4,7 @@ var mssqlR = require('../../function/mssqlR');
 var mongodb = require('../../function/mongodb');
 var httpreq = require('../../function/axios');
 var axios = require('axios');
+const { callSAPAPI } = require('../../function/sapCaller');
 
 
 router.get('/TEST', async (req, res) => {
@@ -65,33 +66,7 @@ router.post('/QMINCOMING/GETDATA', async (req, res) => {
   // let output = datatest04;
   let output = {};
 
-  const axios = require('axios');
-  let data = input;
-
-  // JSON.stringify({
-  //   "datestart": "01.03.2025",
-  //   "dateend": "10.03.2025"
-  // });
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/QMI002GET',
-    url: 'http://172.23.10.168:14090/DATAGW/QMI002GET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      // console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('QMI002GET', input) ?? {};
 
   //-------------------------------------
   res.json(output);
@@ -107,28 +82,7 @@ router.post('/QMINCOMING/SETVALUE', async (req, res) => {
   // let output = datatest04;
   let output = {};
 
-  const axios = require('axios');
-  let data = input;
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/QMI003SET',
-    url: 'http://172.23.10.168:14090/DATAGW/QMI003SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('QMI003SET', input) ?? {};
 
   //-------------------------------------
   res.json(output);
@@ -144,28 +98,7 @@ router.post('/QMINCOMING/UDSAVE', async (req, res) => {
   // let output = datatest04;
   let output = {};
 
-  const axios = require('axios');
-  let data = input;
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
-    url: 'http://172.23.10.168:14090/DATAGW/QMI004SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      output = response.data
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  output = await callSAPAPI('QMI004SET', input) ?? {};
 
   //-------------------------------------
   res.json(output);
@@ -181,43 +114,16 @@ router.post('/QMINCOMING/UDSAVEQC', async (req, res) => {
   // let output = datatest04;
   let output = {};
 
-  const axios = require('axios');
-  let data = input['UD'];
   let dataset = input['UDTEMPSAVE'];
 
-
-
-
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    // url: 'http://127.0.0.1:14090/DATAGW/QMI004SET',
-    url: 'http://172.23.10.168:14090/DATAGW/QMI004SET',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    data: data
-  };
-
-  await axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      output = response.data
-      if (output.length > 0) {
-        console.log(output[0]['TYPE']);
-        if (output[0]['TYPE'] != 'E') {
-
-        }
-      }
-      let querySV = `INSERT INTO [SAPHANADATA].[dbo].[HSGOODRECEIVE] ([PROCESS_ORDER], [GOOD], [NOGOOD],[UD_CODE_GROUP],[UD_CODE],[CODE_TEXT],[SAP_RETURN]) 
+  output = await callSAPAPI('QMI004SET', input['UD']) ?? {};
+  if (output.length > 0) {
+    console.log(output[0]['TYPE']);
+  }
+  const querySV = `INSERT INTO [SAPHANADATA].[dbo].[HSGOODRECEIVE] ([PROCESS_ORDER], [GOOD], [NOGOOD],[UD_CODE_GROUP],[UD_CODE],[CODE_TEXT],[SAP_RETURN])
       VALUES ('${input['UDTEMPSAVE']['PROCESS_ORDER']}', '${input['UDTEMPSAVE']['GOOD']}', '${input['UDTEMPSAVE']['NGOOD']}', '${input['UDTEMPSAVE']['UD_CODE_GROUP']}', '${input['UDTEMPSAVE']['UD_CODE']}', '${input['UDTEMPSAVE']['CODE_TEXT']}', '');`
-
-      console.log(querySV);
-      let db = mssqlR.qureyR(querySV);
-    })
-    .catch((error) => {
-      // console.log(error);
-    });
+  console.log(querySV);
+  await mssqlR.qureyR(querySV);
 
   //-------------------------------------
   res.json(output);
