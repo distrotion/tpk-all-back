@@ -8,7 +8,7 @@ const SAP_LOG_BASE  = path.join(__dirname, '..', 'logs', 'sap');
 const CSV_HEADER = 'datetime,api,duration_ms,input,return_type,return_message,status,error\n';
 
 // API ที่ไม่ต้อง log
-const NO_LOG_APIS = new Set(['PPI002GET', 'QMI002GET']);
+const NO_LOG_APIS = new Set(['PPI001GET', 'PPI002GET', 'QMI002GET']);
 
 // cache folder สร้างแล้ว เพื่อไม่ต้อง existsSync ทุกครั้ง
 const createdDirs = new Set();
